@@ -61,8 +61,10 @@
                                             </th>
                                             <th>#</th>
                                             <th>Nama</th>
-                                            <th>Email</th>
-                                            <th>Role</th>
+                                            <th>KTP</th>
+                                            <th>Jenis Kelamin</th>
+                                            <th>Tempat Tanggal Lahir</th>
+                                            <th>Alamat</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -125,6 +127,7 @@
                 $('.btn-copy').on('click', function() {
                     copyDivToClipboard(this)
                 })
+                btnToggleCharacter()
             }
             , "processing": true
             , "serverSide": true,
@@ -163,10 +166,16 @@
                 , data: 'name'
             }, {
                 className: "text-sm"
-                , data: 'email'
+                , data: 'ktp'
             }, {
                 className: "text-sm"
-                , data: 'role'
+                , data: 'gender'
+            }, {
+                className: "text-sm"
+                , data: 'birth_date_place'
+            }, {
+                className: "text-sm"
+                , data: 'address'
             }, {
                 className: "text-center"
                 , data: 'action'

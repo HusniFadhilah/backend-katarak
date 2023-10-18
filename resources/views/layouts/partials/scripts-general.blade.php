@@ -31,7 +31,7 @@
     function getDataSelect2Search(id, url, placeholder = '- Pilih -', minimumInputLength = 2, isMultiple = true, dataParams = {}, isReverse = false) {
         $(function() {
             $("#" + id).select2({
-                theme: isMultiple ? 'default' : 'select2bs4'
+                theme: isMultiple ? 'default' : 'bootstrap4'
                 , minimumInputLength: minimumInputLength
                 , placeholder: placeholder
                 , multiple: isMultiple
@@ -480,7 +480,7 @@
                         })
                         .then(function(response) {
                             if (response.data.status) {
-                                hiddenText = response.data.showPassword
+                                hiddenText = response.data.showHiddenText
                                 buttonText.text(hiddenText ? hiddenText : '-')
                             }
                         }).catch(error => {

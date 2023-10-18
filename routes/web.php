@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{AdminController, DependentDropdownController, JobController, HomeController, PastMedicalController, PatientController, ProfileController, UserController};
+use App\Http\Controllers\{AdminController, DependentDropdownController, EyeDisorderController, JobController, HomeController, PastMedicalController, PatientController, ProfileController, UserController};
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 /*
@@ -69,10 +69,24 @@ Route::middleware([
         ]
     ]);
 
+    Route::post('/eye-disorder/bulkdestroy', [App\Http\Controllers\EyeDisorderController::class, 'bulkDestroy'])->name('eye-disorder.bulkdestroy');
+    Route::delete('/eye-disorder/{eyeDisorder}/destroy', [EyeDisorderController::class, 'destroy'])->name('eye-disorder.destroy');
+    Route::resource('/eye-disorder', EyeDisorderController::class, [
+        'names' => [
+            'index' => 'eye-disorder',
+            'create' => 'eye-disorder.create',
+            'destroy' => 'eye-disorder.delete'
+        ]
+    ]);
+
     Route::get('/profile/{user}', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile/update/{user}', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::get('roles', [DependentDropdownController::class, 'getRoles'])->name('getroles');
+    Route::get('jobs', [DependentDropdownController::class, 'getJobs'])->name('getjobs');
+    Route::get('eye-disorders', [DependentDropdownController::class, 'getEyeDisorders'])->name('geteyedisorders');
+    Route::get('past-medicals', [DependentDropdownController::class, 'getPastMedicals'])->name('getpastmedicals');
+    Route::post('getshowktp', [DependentDropdownController::class, 'getShowKTP'])->name('getshowktp');
 });
 
 

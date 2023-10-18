@@ -93,9 +93,6 @@
                             <div class="form-group">
                                 <select name="role_id" id="role_id" class="form-control select2bs4 @error('role_id') is-invalid @enderror" required>
                                     <option value="">- Pilih -</option>
-                                    @foreach($roles as $role)
-                                    <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->alias }}</option>
-                                    @endforeach
                                 </select>
                                 @error('role_id')
                                 <span class="invalid-feedback" role="alert">
@@ -119,6 +116,8 @@
 
 @push('scripts')
 <script>
+    getDataSelect2Search('role_id', '{{ route("getroles") }}', '- Pilih -', 0, false, {}, true)
+
     $('#create_form').validate({
         rules: {
             password: {

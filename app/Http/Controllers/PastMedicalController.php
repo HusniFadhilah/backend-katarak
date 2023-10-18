@@ -8,13 +8,10 @@ use Illuminate\Http\Request;
 use App\Helpers\ResponseFormatter;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Actions\Fortify\PasswordValidationRules;
 use App\Models\{PastMedical};
 
 class PastMedicalController extends Controller
 {
-    use PasswordValidationRules;
-
     public function index(Request $request)
     {
         try {

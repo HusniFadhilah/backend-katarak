@@ -23,7 +23,7 @@
         <div class="row">
             <div class="col-lg">
                 <div class="d-flex flex-column flex-md-row">
-                    <a href="{{ route('past-medical.create') }}" class="btn btn-primary mb-3 mr-1"><span class="fa fa-plus mr-2"></span>Tambah Riwayat Penyakit Baru</a>
+                    <a href="{{ route('past-medical.create') }}" class="btn btn-primary mb-3 mr-1"><span class="fa fa-plus mr-2"></span>Tambah Riwayat Penyakit</a>
                 </div>
                 @if (count($errors) > 0)
                 <div class="alert alert-warning alert-dismissible">

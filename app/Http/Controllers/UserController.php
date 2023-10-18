@@ -106,8 +106,7 @@ class UserController extends Controller
 
     public function create()
     {
-        $roles = Role::all();
-        return view('users.create', compact('roles'));
+        return view('users.create');
     }
 
     public function store(Request $request)
@@ -136,8 +135,7 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $roles = Role::all();
-        return view('users.edit', compact('user', 'roles'));
+        return view('users.edit', compact('user'));
     }
 
     public function update(Request $request, User $user)

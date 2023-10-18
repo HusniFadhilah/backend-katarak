@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('job_id')->constrained('roles')->onUpdate('cascade')->onDelete('restrict');
+            $table->foreignId('job_id')->constrained('jobs')->onUpdate('cascade')->onDelete('restrict');
             $table->foreignId('created_by')->default(null)->nullable()->constrained('users');
             $table->foreignId('modificated_by')->default(null)->nullable()->constrained('users');
             $table->string('name');

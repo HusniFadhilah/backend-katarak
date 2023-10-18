@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use Exception;
-use App\Libraries\Fungsi;
+use App\Models\{Patient};
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use App\Libraries\{Date, Fungsi};
 use App\Helpers\ResponseFormatter;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\{Role, Patient};
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
 class PatientController extends Controller
 {
@@ -64,6 +67,10 @@ class PatientController extends Controller
             $row['#'] = '<input type="checkbox" name="checked[]" class="check mr-2" value="' . $patient->id . '">';
             $row['DT_RowIndex'] =  $no;
             $row['name'] = $patient->name;
+            $row['ktp'] = $this->getColumnKTP($patient);
+            $row['gender'] = $patient->gender == 'L' ? 'Laki-laki' : 'Perempuan';
+            $row['birth_date_place'] = $patient->birth_place . ', ' . Date::tglIndo($patient->birth_date);
+            $row['address'] = $patient->address;
             $row['action'] = $this->getColumnAction($patient);
 
             $data[] = $row;
@@ -80,10 +87,15 @@ class PatientController extends Controller
         return json_encode($output);
     }
 
+    private function getColumnKTP($patient)
+    {
+        return '<span class="badge badge-light btn-toggle-character" data-id="' . $patient->id . '" data-route="' . route('getshowktp') . '" data-title-hidden="ktp" data-hidden="" data-timeout="7000"><span class="text">Lihat KTP</span> <i class="fa fa-eye ml-2"></i></span>';
+    }
+
     private function getColumnAction($patient)
     {
-        $btn = '<a href="' . route('pasien.edit', $patient->id) . '"><button type="button" class="btn btn-warning btn-sm m-1 px-3" title="Edit pasien"><span class="fa fa-edit"></span></button></a>';
-        $btn .= '<a onclick="confirmDelete(\'/pasien/' . $patient->id . '/destroy\',\'pasien\')"><button type="button" class="btn btn-danger btn-sm m-1 px-3" title="Hapus pasien"><span class="fa fa-trash"></span></button></a>';
+        $btn = '<a href="' . route('patient.edit', $patient->id) . '"><button type="button" class="btn btn-warning btn-sm m-1 px-3" title="Edit pasien"><span class="fa fa-edit"></span></button></a>';
+        $btn .= '<a onclick="confirmDelete(\'/patient/' . $patient->id . '/destroy\',\'pasien\')"><button type="button" class="btn btn-danger btn-sm m-1 px-3" title="Hapus pasien"><span class="fa fa-trash"></span></button></a>';
         return $btn;
     }
 
@@ -96,10 +108,17 @@ class PatientController extends Controller
     {
         $rules = [
             'name' => ['required', 'max:255'],
+            'ktp' => ['required', 'unique:patients'],
+            'gender' => ['required'],
+            'birth_place' => ['required', 'max:255'],
+            'job_id' => ['required'],
+            'address' => ['required'],
         ];
         $request->validate($rules);
 
         $attr = $request->all();
+        $attr['created_by'] = Auth::id();
+        $attr['ktp'] = Crypt::encrypt($request->ktp);
         $patient = Patient::create($attr);
 
         Fungsi::sweetalert('Pasien berhasil ditambahkan', 'success', 'Berhasil!');
@@ -113,19 +132,24 @@ class PatientController extends Controller
 
     public function edit(Patient $patient)
     {
-        return view('patients.edit', compact('patient'));
+        $ktp = Crypt::decrypt($patient->ktp);
+        return view('patients.edit', compact('patient', 'ktp'));
     }
 
     public function update(Request $request, Patient $patient)
     {
         $rules = [
-            'name' => ['required', 'max:255']
+            'name' => ['required', 'max:255'],
+            'ktp' => ['required', Rule::unique('patients')->ignore($patient->id)],
+            'gender' => ['required'],
+            'birth_place' => ['required', 'max:255'],
+            'job_id' => ['required'],
+            'address' => ['required'],
         ];
-        if (isset($request->password)) {
-            $rules['password'] = $this->passwordRules(false);
-        }
         $request->validate($rules);
         $attr = $request->all();
+        $attr['modificated_by'] = Auth::id();
+        $attr['ktp'] = Crypt::encrypt($request->ktp);
         $patient->update($attr);
 
         Fungsi::sweetalert('Pasien berhasil diupdate', 'success', 'Berhasil!');

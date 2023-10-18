@@ -42,12 +42,19 @@
                     </div>
                     <div class="row">
                         <div class="col-lg-2">
-                            <label>Email *</label>
+                            <label>Jenis Kelamin *</label>
                         </div>
                         <div class="col-lg-10">
                             <div class="form-group">
-                                <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" placeholder="Email" value="{{ old('email') }}" required>
-                                @error('email')
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="gender1" name="gender" value="L" {{ old('gender') === 'L' ? 'checked' : '' }} @error('gender') is-invalid @enderror required>
+                                    <label class="form-check-label" for="gender1">Laki-laki</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="gender2" name="gender" value="P" {{ old('gender') === 'P' ? 'checked' : '' }} @error('gender') is-invalid @enderror required>
+                                    <label class="form-check-label" for="gender2">Perempuan</label>
+                                </div>
+                                @error('gender')
                                 <span class="invalid-feedback" role="alert">
                                     {{ $message }}
                                 </span>
@@ -57,12 +64,12 @@
                     </div>
                     <div class="row">
                         <div class="col-lg-2">
-                            <label>Password *</label>
+                            <label>No KTP *</label>
                         </div>
                         <div class="col-lg-10">
                             <div class="form-group">
-                                <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Password" value="{{ old('password') }}" required>
-                                @error('password')
+                                <input type="password" class="form-control @error('ktp') is-invalid @enderror" name="ktp" placeholder="No KTP" value="{{ old('ktp') }}" required>
+                                @error('ktp')
                                 <span class="invalid-feedback" role="alert">
                                     {{ $message }}
                                 </span>
@@ -72,12 +79,12 @@
                     </div>
                     <div class="row">
                         <div class="col-lg-2">
-                            <label>Konfirmasi Password *</label>
+                            <label>Tempat Lahir *</label>
                         </div>
                         <div class="col-lg-10">
                             <div class="form-group">
-                                <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" name="password_confirmation" placeholder="Konfirmasi Password" value="{{ old('password_confirmation') }}" required>
-                                @error('password_confirmation')
+                                <input type="text" class="form-control @error('birth_place') is-invalid @enderror" name="birth_place" placeholder="Tempat lahir" value="{{ old('birth_place') }}" required>
+                                @error('birth_place')
                                 <span class="invalid-feedback" role="alert">
                                     {{ $message }}
                                 </span>
@@ -87,17 +94,29 @@
                     </div>
                     <div class="row">
                         <div class="col-lg-2">
-                            <label>Role *</label>
+                            <label>Tanggal Lahir *</label>
                         </div>
                         <div class="col-lg-10">
                             <div class="form-group">
-                                <select name="role_id" id="role_id" class="form-control select2bs4 @error('role_id') is-invalid @enderror" required>
+                                <input type="date" class="form-control @error('birth_date') is-invalid @enderror" name="birth_date" placeholder="Tempat lahir" value="{{ old('birth_date') }}" required>
+                                @error('birth_date')
+                                <span class="invalid-feedback" role="alert">
+                                    {{ $message }}
+                                </span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <label>Pekerjaan *</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <div class="form-group">
+                                <select name="job_id" id="job_id" class="form-control select2bs4 @error('job_id') is-invalid @enderror" required>
                                     <option value="">- Pilih -</option>
-                                    @foreach($roles as $role)
-                                    <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->alias }}</option>
-                                    @endforeach
                                 </select>
-                                @error('role_id')
+                                @error('job_id')
                                 <span class="invalid-feedback" role="alert">
                                     {{ $message }}
                                 </span>
@@ -105,7 +124,21 @@
                             </div>
                         </div>
                     </div>
-
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <label>Alamat *</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <div class="form-group">
+                                <textarea rows="4" class="form-control @error('address') is-invalid @enderror" name="address" placeholder="Alamat" required>{{ old('address') }}</textarea>
+                                @error('address')
+                                <span class="invalid-feedback" role="alert">
+                                    {{ $message }}
+                                </span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
                     <div class="mt-5">
                         <button type="submit" class="btn btn-success"><span class="fa fa-plus mr-2"></span> Tambah</button>
                         <button type="reset" class="btn btn-light"><span class="fa fa-redo-alt mr-2"></span> Reset</button>
@@ -119,6 +152,8 @@
 
 @push('scripts')
 <script>
+    getDataSelect2Search('job_id', '{{ route("getjobs") }}', '- Pilih -', 0, false, {}, true)
+
     $('#create_form').validate({
         rules: {
             password: {

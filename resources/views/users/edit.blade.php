@@ -99,9 +99,6 @@
                             <div class="form-group">
                                 <select name="role_id" id="role_id" class="form-control select2bs4 @error('role_id') is-invalid @enderror" required>
                                     <option value="">- Pilih -</option>
-                                    @foreach($roles as $role)
-                                    <option value="{{ $role->id }}" {{ request('role_id') ?? $user->role_id == $role->id ? 'selected' : '' }}>{{ $role->alias }}</option>
-                                    @endforeach
                                 </select>
                                 @error('role_id')
                                 <span class="invalid-feedback" role="alert">
@@ -125,6 +122,8 @@
 
 @push('scripts')
 <script>
+    getDataSelect2('role_id', '{{ route("getroles") }}', '- Pilih -', {}, false, '{{ $user->role_id }}', false)
+
     $('#edit_form').validate({
         rules: {}
         , messages: {}
