@@ -24,9 +24,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'role_id', 'created_by', 'modificated_by', 'name', 'email', 'password', 'phone_number', 'is_active',
     ];
 
     /**
@@ -50,12 +48,28 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array<int, string>
-     */
-    protected $appends = [
-        'profile_photo_url',
-    ];
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function hasRole($role)
+    {
+        return strtolower($this->role->name) == strtolower($role);
+    }
+
+    public function eyeImages()
+    {
+        return $this->hasMany(EyeImage::class, 'kader_id', 'id');
+    }
+
+    public function eyeExaminationKaders()
+    {
+        return $this->hasMany(EyeExamination::class, 'kader_id', 'id');
+    }
+
+    public function eyeExaminationDoctors()
+    {
+        return $this->hasMany(EyeExamination::class, 'doctor_id', 'id');
+    }
 }
