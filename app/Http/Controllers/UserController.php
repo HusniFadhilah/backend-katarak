@@ -57,7 +57,6 @@ class UserController extends Controller
         if ($request->s_roles)
             $users->whereIn('role_id', $request->s_roles);
         if ($search) {
-            $users->where('username', 'LIKE', '%' . $search . '%');
             $users->orWhere('name', 'LIKE', '%' . $search . '%');
             $users->orWhere('email', 'LIKE', '%' . $search . '%');
             $users->orWhereHas('role', function ($q) use ($search) {

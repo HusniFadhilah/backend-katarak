@@ -35,3 +35,21 @@
         <span>Kelola User</span>
     </a>
 </li>
+<li class="nav-item{{ request()->is('job','job/*') ? ' active' : ''}}">
+    <a class="nav-link" href="{{ route('job') }}">
+        <i class="icon-work"></i>
+        <span>Kelola Pekerjaan</span>
+    </a>
+</li>
+<li class="nav-item{{ request()->is('patient','patient/*') ? ' active' : ''}}">
+    <a class="nav-link" href="{{ route('patient') }}">
+        <i class="icon-people"></i>
+        <span>Kelola Pasien</span>
+    </a>
+</li>
+<li class="nav-item{{ request()->is('past-medical','past-medical/*') ? ' active' : ''}}">
+    <a class="nav-link" href="{{ route('past-medical') }}">
+        <i class="ion-ios-medical"></i>
+        <span>Kelola Riwayat Penyakit</span>
+    </a>
+</li>

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{AdminController, DependentDropdownController, HomeController, ProfileController, UserController};
+use App\Http\Controllers\{AdminController, DependentDropdownController, JobController, HomeController, PastMedicalController, PatientController, ProfileController, UserController};
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 /*
@@ -36,6 +36,36 @@ Route::middleware([
             'index' => 'user',
             'create' => 'user.create',
             'destroy' => 'user.delete'
+        ]
+    ]);
+
+    Route::post('/patient/bulkdestroy', [App\Http\Controllers\PatientController::class, 'bulkDestroy'])->name('patient.bulkdestroy');
+    Route::delete('/patient/{patient}/destroy', [PatientController::class, 'destroy'])->name('patient.destroy');
+    Route::resource('/patient', PatientController::class, [
+        'names' => [
+            'index' => 'patient',
+            'create' => 'patient.create',
+            'destroy' => 'patient.delete'
+        ]
+    ]);
+
+    Route::post('/job/bulkdestroy', [App\Http\Controllers\JobController::class, 'bulkDestroy'])->name('job.bulkdestroy');
+    Route::delete('/job/{job}/destroy', [JobController::class, 'destroy'])->name('job.destroy');
+    Route::resource('/job', JobController::class, [
+        'names' => [
+            'index' => 'job',
+            'create' => 'job.create',
+            'destroy' => 'job.delete'
+        ]
+    ]);
+
+    Route::post('/past-medical/bulkdestroy', [App\Http\Controllers\PastMedicalController::class, 'bulkDestroy'])->name('past-medical.bulkdestroy');
+    Route::delete('/past-medical/{pastMedical}/destroy', [PastMedicalController::class, 'destroy'])->name('past-medical.destroy');
+    Route::resource('/past-medical', PastMedicalController::class, [
+        'names' => [
+            'index' => 'past-medical',
+            'create' => 'past-medical.create',
+            'destroy' => 'past-medical.delete'
         ]
     ]);
 

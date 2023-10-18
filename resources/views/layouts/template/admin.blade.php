@@ -11,13 +11,13 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title') | Doltinuku</title>
+    <title>@yield('title') | Deteksi Dini Katarak</title>
 
-    <!-- Add site Favicon -->
-    <link rel="icon" href="{{ asset('/frontend/images/favicon/favicon-32x32.png') }}" />
-    <link rel="icon" href="{{ asset('/frontend/images/favicon/favicon-96x96.png') }}" />
-    <link rel="apple-touch-icon" href="{{ asset('/frontend/images/favicon/apple-icon-180x180.png') }}" />
-    <meta name="msapplication-TileImage" content="{{ asset('/frontend/images/favicon/ms-icon-310x310.png') }}" />
+    <!-- Icon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/favicon/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/favicon/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/favicon/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ asset('assets/favicon/site.webmanifest') }}">
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" type="text/css">
@@ -41,7 +41,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/flaticon.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/icomoon.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/ionicons.min.css') }}">
-    {{-- <link rel="icon" type="image/png" href="https://doltinuku.id/storage/assets/img/logo.ico"/>--}}
 
     <!-- Custom styles for this template-->
     <link rel="stylesheet" href="{{ asset('assets/css/sbadmin2/sb-admin-2.min.css') }}">
