@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\{EyeDisorderController, JobController, PastMedicalController};
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware([
+//     'auth:sanctum',
+// ])->group(function () {
+Route::get('/job', [JobController::class, 'index'])->name('job');
+Route::get('/past-medical', [PastMedicalController::class, 'index'])->name('past-medical');
+Route::get('/eye-disorder', [EyeDisorderController::class, 'index'])->name('eye-disorder');
+// });

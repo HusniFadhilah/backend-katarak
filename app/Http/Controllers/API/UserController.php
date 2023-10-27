@@ -52,48 +52,15 @@ class UserController extends Controller
         }
     }
 
-    public function updatePhoto(Request $request)
-    {
-        try {
-            $validator = Validator::make($request->all(), [
-                'file' => 'required|image|max:2048'
-            ]);
-
-            if ($validator->fails()) {
-                return ResponseFormatter::error([
-                    'error' => $validator->errors(),
-                    'message' => 'Harap isi form dengan benar'
-                ], 'Update photo profile failed', 422);
-            }
-
-            if ($request->file('file')) {
-
-                $file = $request->file->store('assets/user', 'public');
-
-                //store your file into database
-                $user = Auth::user();
-                $user->profile_photo_path = $file;
-                $user->update();
-
-                return ResponseFormatter::success([$file], 'File successfully updated');
-            }
-        } catch (Exception $error) {
-            return ResponseFormatter::error([
-                'message' => 'Terjadi kegagalan, silahkan coba lagi',
-                'error' => $error,
-            ], 'Update photo profile failed', 500);
-        }
-    }
-
     public function changePassword(Request $request)
     {
         try {
             $user = Auth::user();
 
             $niceNames = array(
-                'oldpassword' => 'password lama',
-                'newpassword' => 'password baru',
-                'confpassword' => 'konfirmasi password baru',
+                'old_password' => 'password lama',
+                'new_password' => 'password baru',
+                'conf_password' => 'konfirmasi password baru',
             );
 
             if (!$user) {
@@ -103,9 +70,9 @@ class UserController extends Controller
             }
 
             $validator = Validator::make($request->all(), [
-                'oldpassword' => 'required|current_password:' . $user->id,
-                'newpassword' => 'required|min:4|different_password:' . $user->id,
-                'confpassword' => 'required|same:newpassword'
+                'old_password' => 'required|current_password:' . $user->id,
+                'new_password' => 'required|min:4|different_password:' . $user->id,
+                'conf_password' => 'required|same:new_password'
             ], [], $niceNames);
 
             if ($validator->fails()) {
@@ -115,7 +82,7 @@ class UserController extends Controller
                 ], 'Change password failed', 422);
             }
 
-            $user->password = Hash::make($request->newpassword);
+            $user->password = Hash::make($request->new_password);
             $user->update();
 
             return ResponseFormatter::success([
