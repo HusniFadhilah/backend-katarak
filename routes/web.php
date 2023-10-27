@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{AdminController, DependentDropdownController, EyeDisorderController, JobController, HomeController, PastMedicalController, PatientController, ProfileController, UserController};
+use Illuminate\Support\Facades\Artisan;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+use App\Http\Controllers\{AdminController, DependentDropdownController, EyeDisorderController, JobController, HomeController, PastMedicalController, PatientController, ProfileController, UserController};
 
 /*
 |--------------------------------------------------------------------------
@@ -102,18 +103,18 @@ Route::middleware([
 //     shell_exec('composer install');
 // });
 
-// Route::get('migrateseed', function () {
-//     Illuminate\Support\Facades\Artisan::call('migrate:fresh');
-//     Artisan::call(
-//         'db:seed',
-//         array(
-//             '--force' => true
-//         )
-//     );
-// });
+Route::get('migrateseed', function () {
+    Artisan::call('migrate:fresh');
+    Artisan::call(
+        'db:seed',
+        array(
+            '--force' => true
+        )
+    );
+});
 
-// Route::get('storagelink', function () {
-//     Artisan::call(
-//         'storage:link'
-//     );
-// });
+Route::get('storagelink', function () {
+    Artisan::call(
+        'storage:link'
+    );
+});
