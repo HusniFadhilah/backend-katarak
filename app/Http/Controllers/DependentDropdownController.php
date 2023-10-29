@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Exception;
-use App\Models\{EyeDisorder, Job, PastMedical, Patient, Role};
+use App\Models\{EyeDisorder, Job, PastMedical, Patient, Role, User};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Crypt, Log};
 
@@ -92,6 +92,60 @@ class DependentDropdownController extends Controller
             $pastMedical = $pastMedical->pluck('id', 'name');
 
             return response()->json($pastMedical);
+        } catch (Exception $error) {
+            Log::channel('command')->info($error);
+            $arr = array('msg' => 'Terjadi kegagalan. Error: ' . $error->getMessage(), 'status' => false);
+            return response()->json($arr);
+        }
+    }
+
+    public function getPatients(Request $request)
+    {
+        try {
+            $name = $request->name;
+            $patients = Patient::query();
+            if ($name)
+                $patients->where('name', 'LIKE', '%' . $name . '%');
+
+            $patients = $patients->pluck('id', 'name');
+
+            return response()->json($patients);
+        } catch (Exception $error) {
+            Log::channel('command')->info($error);
+            $arr = array('msg' => 'Terjadi kegagalan. Error: ' . $error->getMessage(), 'status' => false);
+            return response()->json($arr);
+        }
+    }
+
+    public function getDoctors(Request $request)
+    {
+        try {
+            $name = $request->name;
+            $doctors = User::whereRoleId(2);
+            if ($name)
+                $doctors->where('name', 'LIKE', '%' . $name . '%');
+
+            $doctors = $doctors->pluck('id', 'name');
+
+            return response()->json($doctors);
+        } catch (Exception $error) {
+            Log::channel('command')->info($error);
+            $arr = array('msg' => 'Terjadi kegagalan. Error: ' . $error->getMessage(), 'status' => false);
+            return response()->json($arr);
+        }
+    }
+
+    public function getKaders(Request $request)
+    {
+        try {
+            $name = $request->name;
+            $kaders = User::whereRoleId(3);
+            if ($name)
+                $kaders->where('name', 'LIKE', '%' . $name . '%');
+
+            $kaders = $kaders->pluck('id', 'name');
+
+            return response()->json($kaders);
         } catch (Exception $error) {
             Log::channel('command')->info($error);
             $arr = array('msg' => 'Terjadi kegagalan. Error: ' . $error->getMessage(), 'status' => false);

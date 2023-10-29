@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
-use App\Http\Controllers\{AdminController, DependentDropdownController, EyeDisorderController, JobController, HomeController, PastMedicalController, PatientController, ProfileController, UserController};
+use App\Http\Controllers\{AdminController, DependentDropdownController, EyeDisorderController, EyeExaminationController, JobController, HomeController, PastMedicalController, PatientController, ProfileController, UserController};
 
 /*
 |--------------------------------------------------------------------------
@@ -80,11 +80,24 @@ Route::middleware([
         ]
     ]);
 
+    Route::post('/eye-examination/bulkdestroy', [App\Http\Controllers\EyeExaminationController::class, 'bulkDestroy'])->name('eye-examination.bulkdestroy');
+    Route::delete('/eye-examination/{eyeDisorder}/destroy', [EyeExaminationController::class, 'destroy'])->name('eye-examination.destroy');
+    Route::resource('/eye-examination', EyeExaminationController::class, [
+        'names' => [
+            'index' => 'eye-examination',
+            'create' => 'eye-examination.create',
+            'destroy' => 'eye-examination.delete'
+        ]
+    ]);
+
     Route::get('/profile/{user}', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile/update/{user}', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::get('roles', [DependentDropdownController::class, 'getRoles'])->name('getroles');
     Route::get('jobs', [DependentDropdownController::class, 'getJobs'])->name('getjobs');
+    Route::get('patients', [DependentDropdownController::class, 'getPatients'])->name('getpatients');
+    Route::get('doctors', [DependentDropdownController::class, 'getDoctors'])->name('getdoctors');
+    Route::get('kaders', [DependentDropdownController::class, 'getKaders'])->name('getkaders');
     Route::get('eye-disorders', [DependentDropdownController::class, 'getEyeDisorders'])->name('geteyedisorders');
     Route::get('past-medicals', [DependentDropdownController::class, 'getPastMedicals'])->name('getpastmedicals');
     Route::post('getshowktp', [DependentDropdownController::class, 'getShowKTP'])->name('getshowktp');

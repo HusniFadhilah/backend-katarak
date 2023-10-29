@@ -59,3 +59,9 @@
         <span>Kelola Data Keluhan Mata</span>
     </a>
 </li>
+<li class="nav-item{{ request()->is('eye-examination','eye-examination/*') ? ' active' : ''}}">
+    <a class="nav-link" href="{{ route('eye-examination') }}">
+        <i class="icon-eye"></i>
+        <span>Kelola Data Pemeriksaan</span>
+    </a>
+</li>

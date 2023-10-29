@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\{AuthController, EyeDisorderController, JobController, PastMedicalController, UserController};
+use App\Http\Controllers\API\{AuthController, EyeDisorderController, EyeExaminationController, JobController, PastMedicalController, UserController};
 
 /*
 |--------------------------------------------------------------------------
@@ -24,8 +24,11 @@ Route::middleware([
     Route::post('logout', [AuthController::class, 'logout']);
 });
 
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class, 'register']);
-Route::get('/job', [JobController::class, 'index'])->name('job');
-Route::get('/past-medical', [PastMedicalController::class, 'index'])->name('past-medical');
-Route::get('/eye-disorder', [EyeDisorderController::class, 'index'])->name('eye-disorder');
+Route::name('api.')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::get('/job', [JobController::class, 'index'])->name('job');
+    Route::get('/past-medical', [PastMedicalController::class, 'index'])->name('past-medical');
+    Route::get('/eye-disorder', [EyeDisorderController::class, 'index'])->name('eye-disorder');
+    Route::get('/eye-examination', [EyeExaminationController::class, 'index'])->name('eye-examination');
+});
