@@ -3,19 +3,14 @@
 namespace App\Http\Controllers\API;
 
 use Exception;
-use App\Models\Shop;
 use App\Models\User;
-use App\Models\Product;
-use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Helpers\ResponseFormatter;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\{DB, Log};
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\{Auth, Hash};
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\{Password, Validator};
 
 class AuthController extends Controller
 {
@@ -73,6 +68,7 @@ class AuthController extends Controller
                 'user' => $user
             ], 'Authenticated');
         } catch (Exception $error) {
+            Log::channel('command')->info($error);
             return ResponseFormatter::error([
                 'message' => 'Terjadi kegagalan, silahkan coba lagi',
                 'error' => $error,
@@ -87,6 +83,7 @@ class AuthController extends Controller
 
             return ResponseFormatter::success($token, 'Token revoked');
         } catch (Exception $error) {
+            Log::channel('command')->info($error);
             return ResponseFormatter::error([
                 'message' => 'Terjadi kegagalan, silahkan coba lagi',
                 'error' => $error,
@@ -145,6 +142,7 @@ class AuthController extends Controller
                 'user' => $user
             ], 'User successfully registered');
         } catch (Exception $error) {
+            Log::channel('command')->info($error);
             return ResponseFormatter::error([
                 'message' => 'Terjadi kegagalan, silahkan coba lagi',
                 'error' => $error,
@@ -183,6 +181,7 @@ class AuthController extends Controller
 
             return ResponseFormatter::success([], 'Check user success');
         } catch (Exception $error) {
+            Log::channel('command')->info($error);
             return ResponseFormatter::error([
                 'message' => 'Terjadi kegagalan, silahkan coba lagi',
                 'error' => $error,
@@ -214,6 +213,7 @@ class AuthController extends Controller
                 return ResponseFormatter::error(['message' => 'Link reset password gagal dikirim', 'error' => ['email' => ['Silahkan coba dalam beberapa waktu lagi']]], 'Send link reset password failed', 403);
             }
         } catch (Exception $error) {
+            Log::channel('command')->info($error);
             return ResponseFormatter::error([
                 'message' => 'Terjadi kegagalan, silahkan coba lagi',
                 'error' => $error,

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class EyeImage extends Model
 {
@@ -26,5 +27,15 @@ class EyeImage extends Model
     public function kader()
     {
         return $this->belongsTo(User::class, 'kader_id', 'id');
+    }
+
+    public function getImagePathAttribute()
+    {
+        return url('') . Storage::url($this->attributes['image_path']);
+    }
+
+    public function getImagePathOriginal()
+    {
+        return $this->attributes['image_path'];
     }
 }

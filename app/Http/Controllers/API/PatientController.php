@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use Exception;
 use App\Models\Patient;
 use Illuminate\Http\Request;
+use App\Helpers\ResponseFormatter;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 
@@ -29,11 +30,16 @@ class PatientController extends Controller
             else
                 $patients = $patients->pluck($pluckKey, 'name');
 
-            return response()->json($patients);
+            return ResponseFormatter::success(
+                $patients,
+                'Data pasien berhasil diambil'
+            );
         } catch (Exception $error) {
-            Log::channel('command')->info($error);
-            $arr = array('msg' => 'Terjadi kegagalan. Error: ' . $error->getMessage(), 'status' => false);
-            return response()->json($arr);
+            Log::channel('api')->info($error);
+            return ResponseFormatter::error([
+                'message' => 'Terjadi kegagalan, silahkan coba lagi',
+                'error' => $error,
+            ], 'Fetch patient failed', 500);
         }
     }
 }

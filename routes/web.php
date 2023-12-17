@@ -81,7 +81,7 @@ Route::middleware([
     ]);
 
     Route::post('/eye-examination/bulkdestroy', [App\Http\Controllers\EyeExaminationController::class, 'bulkDestroy'])->name('eye-examination.bulkdestroy');
-    Route::delete('/eye-examination/{eyeDisorder}/destroy', [EyeExaminationController::class, 'destroy'])->name('eye-examination.destroy');
+    Route::delete('/eye-examination/{eyeExamination}/destroy', [EyeExaminationController::class, 'destroy'])->name('eye-examination.destroy');
     Route::resource('/eye-examination', EyeExaminationController::class, [
         'names' => [
             'index' => 'eye-examination',
@@ -104,17 +104,17 @@ Route::middleware([
 });
 
 
-// Route::get('clearcache', function () {
-//     Illuminate\Support\Facades\Artisan::call('cache:clear');
-//     Illuminate\Support\Facades\Artisan::call('route:clear');
-//     Illuminate\Support\Facades\Artisan::call('view:clear');
-//     Illuminate\Support\Facades\Artisan::call('config:clear');
-//     Illuminate\Support\Facades\Artisan::call('config:cache');
-// });
+Route::get('clearcache', function () {
+    Illuminate\Support\Facades\Artisan::call('cache:clear');
+    Illuminate\Support\Facades\Artisan::call('route:clear');
+    Illuminate\Support\Facades\Artisan::call('view:clear');
+    Illuminate\Support\Facades\Artisan::call('config:clear');
+    Illuminate\Support\Facades\Artisan::call('config:cache');
+});
 
-// Route::get('composerinstall', function () {
-//     shell_exec('composer install');
-// });
+Route::get('composerinstall', function () {
+    shell_exec('composer install');
+});
 
 Route::get('migrateseed', function () {
     Artisan::call('migrate:fresh');

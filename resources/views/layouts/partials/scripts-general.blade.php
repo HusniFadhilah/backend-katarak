@@ -280,8 +280,100 @@
         }
     }
 
+    function initDropzone(typeDocument, typeFile, type, url, urlDestroy, loadInitCallback, acceptedFiles, maxFiles = 3, maxFilesize = 0.5) {
+        let dropzoneFormElementId = '#dropzone-form-' + type;
+        let dropzoneElementId = '#dropzone-' + type;
+        let myDropzone = new Dropzone(dropzoneFormElementId, {
+            url: url
+            , headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+            , acceptedFiles: acceptedFiles
+            , maxFiles: maxFiles
+            , maxFilesize: maxFilesize, // dalam MB
+            addRemoveLinks: true
+            , dictRemoveFile: "Hapus"
+            , thumbnailWidth: 120
+            , thumbnailHeight: 120
+            , dictInvalidFileType: `Tipe file tidak valid. Hanya file ${acceptedFiles} yang diperbolehkan.`
+            , dictFileTooBig: `Ukuran file terlalu besar. Maksimal ${maxFilesize}MB`
+            , init: function() {
+                let myDropzone = this;
+                loadInitCallback(myDropzone, typeDocument, typeFile, type);
 
-    function generateCode(prefix = 'SP3STAB-SIPENAHANA-', id_target = 'code', length = 5) {
+                this.on("addedfile", function(file) {
+                    // Menampilkan status loading
+                    file.previewElement.querySelector(".dz-progress").classList.add("dz-loading");
+                });
+
+                this.on("thumbnail", function(file) {
+                    if (file.type === "application/pdf") {
+                        // For PDF files, show a PDF icon as the thumbnail
+                        file.previewElement.querySelector(".dz-image").innerHTML = '<i class="pdf-thumbnail fa fa-file-pdf"></i>';
+                    }
+                    // Menghapus status loading setelah gambar berhasil diinisialisasi
+                    file.previewElement.querySelector(".dz-progress").classList.remove("dz-loading");
+                });
+
+                // Event ketika file berhasil di-upload
+                this.on("success", function(file, response) {
+                    if (response.status) {
+                        triggerToastr('Berhasil!', response.msg, 'success');
+                        $(file.previewElement).find(".dz-image").attr("data-id", response.id);
+                        $(dropzoneElementId + " .error-message").text('')
+                    } else {
+                        myDropzone.removeFile(file);
+                        triggerToastr('Gagal!', response.msg, 'error');
+                        $(dropzoneElementId + " .error-message").text(response.msg)
+                    }
+                });
+
+                // Event ketika terjadi kesalahan dalam proses upload
+                this.on("error", function(file, errorMessage, xhr) {
+                    if (typeof errorMessage == 'object')
+                        errorMessage = errorMessage.message
+                    $(dropzoneElementId + " .error-message").text(errorMessage);
+                });
+
+                // Event ketika file dihapus
+                this.on("removedfile", function(file) {
+                    if ($(file.previewElement).find(".dz-image").data("id"))
+                        $.ajax({
+                            type: "post"
+                            , headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            }
+                            , data: {
+                                id: $(file.previewElement).find(".dz-image").data("id")
+                            }
+                            , url: urlDestroy
+                            , success: function(response) {
+                                if (response.status) {
+                                    triggerToastr('Berhasil!', response.msg, 'success');
+                                    $(dropzoneElementId + " .error-message").text('')
+                                } else {
+                                    $(dropzoneElementId + " .error-message").text(response.msg)
+                                }
+                            }
+                            , error: function(xhr, status, error) {
+                                if (error = 'error') {
+                                    error = xhr.responseJSON != null ? xhr.responseJSON.message : xhr.responseText
+                                }
+                                $(dropzoneElementId + " .error-message").text(error);
+                            }
+                        });
+                });
+            }
+            , error: function(file, message, xhr) {
+                // Menghapus gambar yang error
+                file.previewElement.querySelector(".dz-error-mark").style.display = "none";
+            }
+        });
+
+        return myDropzone;
+    }
+
+    function generateCode(prefix = 'KATARAK-', id_target = 'code', length = 5) {
         $('#' + id_target).val(prefix + Math.random().toString(36).substr(2, length));
     }
 
@@ -552,6 +644,33 @@
                 });
             }
         });
+    }
+
+    function resetUploadPreview(target_preview = null) {
+        target_preview = target_preview == null ? 'img-preview' : target_preview;
+        const src = $('#' + target_preview).data('src')
+        $('#' + target_preview).attr('src', src);
+    }
+
+    function clearUpload(id = null, target_preview = null) {
+        id = id == null ? 'thumbnail' : id;
+        target_preview = target_preview == null ? 'img-preview' : target_preview;
+        $('#' + id).val('');
+        resetUploadPreview(target_preview);
+    }
+
+    function previewImg(id = null, target_preview = null) {
+        id = id == null ? 'thumbnail' : id;
+        target_preview = target_preview == null ? 'img-preview' : target_preview;
+        const gambar = document.querySelector('#' + id);
+        const preview_gambar = document.querySelector('#' + target_preview);
+
+        const file_gambar = new FileReader();
+        file_gambar.readAsDataURL(gambar.files[0]);
+
+        file_gambar.onload = function(e) {
+            preview_gambar.src = e.target.result;
+        }
     }
 
 </script>

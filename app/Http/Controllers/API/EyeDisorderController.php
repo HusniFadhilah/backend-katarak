@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use Exception;
 use App\Models\EyeDisorder;
 use Illuminate\Http\Request;
+use App\Helpers\ResponseFormatter;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 
@@ -28,11 +29,16 @@ class EyeDisorderController extends Controller
             else
                 $eyeDisorders = $eyeDisorders->pluck($pluckKey, 'name');
 
-            return response()->json($eyeDisorders);
+            return ResponseFormatter::success(
+                $eyeDisorders,
+                'Data kelainan di mata berhasil diambil'
+            );
         } catch (Exception $error) {
-            Log::channel('command')->info($error);
-            $arr = array('msg' => 'Terjadi kegagalan. Error: ' . $error->getMessage(), 'status' => false);
-            return response()->json($arr);
+            Log::channel('api')->info($error);
+            return ResponseFormatter::error([
+                'message' => 'Terjadi kegagalan, silahkan coba lagi',
+                'error' => $error,
+            ], 'Fetch eye disorder failed', 500);
         }
     }
 }

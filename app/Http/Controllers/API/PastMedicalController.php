@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use Exception;
 use App\Models\PastMedical;
 use Illuminate\Http\Request;
+use App\Helpers\ResponseFormatter;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 
@@ -28,11 +29,17 @@ class PastMedicalController extends Controller
             else
                 $pastMedicals = $pastMedicals->pluck($pluckKey, 'name');
 
+            return ResponseFormatter::success(
+                $pastMedicals,
+                'Data riwayat penyakit terdahulu berhasil diambil'
+            );
             return response()->json($pastMedicals);
         } catch (Exception $error) {
-            Log::channel('command')->info($error);
-            $arr = array('msg' => 'Terjadi kegagalan. Error: ' . $error->getMessage(), 'status' => false);
-            return response()->json($arr);
+            Log::channel('api')->info($error);
+            return ResponseFormatter::error([
+                'message' => 'Terjadi kegagalan, silahkan coba lagi',
+                'error' => $error,
+            ], 'Fetch past medical failed', 500);
         }
     }
 }

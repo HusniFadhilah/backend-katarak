@@ -37,4 +37,30 @@ class EyeExamination extends Model
     {
         return $this->belongsTo(PastMedical::class, 'kader_id', 'id');
     }
+
+    public function eyeImages()
+    {
+        return $this->hasMany(EyeImage::class);
+    }
+
+    public function eyeDisorderExaminations()
+    {
+        return $this->hasMany(EyeDisorderExamination::class);
+    }
+
+    public function pastMedicalExaminations()
+    {
+        return $this->hasMany(PastMedicalExamination::class);
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($eyeExamination) {
+            $eyeExamination->eyeImages()->delete();
+            $eyeExamination->eyeDisorderExaminations()->delete();
+            $eyeExamination->pastMedicalExaminations()->delete();
+        });
+    }
 }

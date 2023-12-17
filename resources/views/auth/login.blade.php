@@ -33,7 +33,7 @@
                                 <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
 
-                                <form class="user" method="post" action="{{ route('login') }}">
+                                <form class="user" method="post" action="{{ route('login') }}" id="login_form">
                                     @csrf
                                     <div class="form-group">
                                         <input id="email" type="email" class="form-control form-control-user @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus placeholder="Alamat Email">
@@ -67,3 +67,24 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+    $('#login_form').validate({
+        rules: {}
+        , messages: {}
+        , errorElement: 'span'
+        , errorPlacement: function(error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        }
+        , highlight: function(element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        }
+        , unhighlight: function(element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }
+    });
+
+</script>
+@endpush

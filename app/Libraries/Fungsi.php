@@ -2,11 +2,9 @@
 
 namespace App\Libraries;
 
+use Exception;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\{Auth, File, Log};
 use Intervention\Image\ImageManagerStatic as Image;
 
 /**
@@ -14,28 +12,57 @@ use Intervention\Image\ImageManagerStatic as Image;
  */
 class Fungsi
 {
-    public static function compressImage($image, $path, $intensity = 70, $maxWidth = '', $maxHeight = '')
+    public static function compressImage($image, $path, $intensity = 70, $maxWidth = null, $maxHeight = null)
     {
-        $fileExtension   = strtolower($image->getClientOriginalExtension());
-        $file_name       = sha1(uniqid() . $image . uniqid()) . '.' . $fileExtension;
+        // Validate image MIME type
+        $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        $mime = $image->getClientMimeType();
+
+        if (!in_array($mime, $allowedMimeTypes)) {
+            // Handle invalid image type
+            return null;
+        }
+
+        // Generate unique filename
+        $fileExtension = strtolower($image->getClientOriginalExtension());
+        $file_name = Str::uuid() . '.' . $fileExtension;
+
         $destinationPath = 'assets/img/' . $path;
+
+        // Check if destination path exists, if not, create it
+        if (!File::isDirectory(storage_path('app/public/' . $destinationPath))) {
+            File::makeDirectory(storage_path('app/public/' . $destinationPath), 0777, true, true);
+        }
+
         $img = Image::make($image->getRealPath());
 
-        // Cek ukuran gambar
+        // Check image dimensions and resize if necessary
         $width = $img->width();
         $height = $img->height();
 
         $maxWidth = $maxWidth ?? $width;
         $maxHeight = $maxHeight ?? $height;
-        // Periksa jika ukuran gambar melebihi batas maksimal
-        if ($width > $maxWidth || $height > $maxHeight) {
-            // Tentukan skala penyesuaian berdasarkan sisi terpanjang
-            $scale = $width > $height ? $maxWidth / $width : $maxHeight / $height;
-            // Resize gambar
-            $img->resize($width * $scale, $height * $scale);
+
+        $aspectRatio = $width / $height;
+
+        if ($aspectRatio > $maxWidth / $maxHeight) {
+            $img->resize($maxWidth, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+        } else {
+            $img->resize(null, $maxHeight, function ($constraint) {
+                $constraint->aspectRatio();
+            });
         }
 
-        $img->save(storage_path() . '/app/public/' . $destinationPath . $file_name, $intensity);
+        // Save image with intensity
+        try {
+            $img->save(storage_path('app/public/' . $destinationPath . $file_name), $intensity);
+        } catch (Exception $error) {
+            Log::channel('command')->info($error);
+            return null;
+        }
+
         return [$image->getClientOriginalName(), $destinationPath . $file_name];
     }
 

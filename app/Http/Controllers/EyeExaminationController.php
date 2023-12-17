@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use Exception;
-use App\Libraries\Date;
-use App\Libraries\Fungsi;
+use App\Libraries\{Date, Fungsi};
 use Illuminate\Http\Request;
-use App\Models\{EyeExamination};
+use App\Models\{EyeDisorderExamination, EyeExamination, EyeImage, PastMedicalExamination};
 use App\Helpers\ResponseFormatter;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -88,8 +87,10 @@ class EyeExaminationController extends Controller
 
     private function getColumnAction($eyeExamination)
     {
-        $text = '<a href="' . route('eye-examination.edit', $eyeExamination->id) . '"><button type="button" class="btn btn-warning btn-sm m-1 px-3" title="Edit data pemeriksaanta"><span class="fa fa-edit"></span></button></a>';
-        $text .= '<a onclick="confirmDelete(\'/eye-examination/' . $eyeExamination->id . '/destroy\',\'Keluhan di mata\')"><button type="button" class="btn btn-danger btn-sm m-1 px-3" title="Hapus data pemeriksaanta"><span class="fa fa-trash"></span></button></a>';
+        $creator = 'Dibuat oleh: ' . $eyeExamination->kader->name . '<br>Dibuat pada: ' . Date::tglDefault($eyeExamination->created_at) . ' pukul ' . Date::pukul($eyeExamination->created_at);
+        $text = '<a type="button" class="btn btn-dark btn-sm m-1 px-3" data-toggle="popover" tabindex="0" data-trigger="focus" title="Tentang pemeriksaan mata ini" data-bs-html="true" data-html="true" data-bs-content="' . $creator . '" data-content="' . $creator . '"><span class="fa fa-info-circle"></span></a>';
+        $text .= '<a href="' . route('eye-examination.edit', $eyeExamination->id) . '"><button type="button" class="btn btn-warning btn-sm m-1 px-3" title="Edit data pemeriksaanta"><span class="fa fa-edit"></span></button></a>';
+        $text .= '<a onclick="confirmDelete(\'/eye-examination/' . $eyeExamination->id . '/destroy\',\'Pemeriksaan mata\')"><button type="button" class="btn btn-danger btn-sm m-1 px-3" title="Hapus data pemeriksaan mata"><span class="fa fa-trash"></span></button></a>';
         return $text;
     }
 
@@ -146,9 +147,31 @@ class EyeExaminationController extends Controller
         $attr['latitude'] = $currentUserInfo ? $currentUserInfo->latitude : '';
         $attr['longitude'] = $currentUserInfo ? $currentUserInfo->longitude : '';
         $eyeExamination = EyeExamination::create($attr);
-
+        $imagePath = Fungsi::compressImage($request->file('image'), 'eye-examination/');
+        if (!$imagePath) {
+            $eyeExamination->delete();
+            Fungsi::sweetalert('Silahkan perbaiki file upload Anda', 'error', 'Gagal!');
+            return back()->withInput();
+        }
+        EyeImage::create(['eye_examination_id' => $eyeExamination->id, 'patient_id' => $eyeExamination->patient_id, 'kader_id' => $eyeExamination->kader_id, 'image_path' => $imagePath[1]]);
+        $this->insertData($request->eye_disorders_id, new EyeDisorderExamination, $eyeExamination, 'eye_disorder_id', 'eyeDisorderExaminations');
+        $this->insertData($request->past_medicals_id, new PastMedicalExamination, $eyeExamination, 'past_medical_id', 'pastMedicalExaminations');
         Fungsi::sweetalert('Data pemeriksaan mata berhasil ditambahkan', 'success', 'Berhasil!');
         return redirect(route('eye-examination'));
+    }
+
+    private function insertData($ids, $model, $eyeExamination, $column, $relationName)
+    {
+        $eyeExamination->$relationName()->delete();
+        $dataInsert = array_map(function ($id) use ($eyeExamination, $column) {
+            return [
+                'eye_examination_id' => $eyeExamination->id,
+                $column => $id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }, $ids);
+        $model::insert($dataInsert);
     }
 
     public function show(EyeExamination $eyeExamination)
@@ -158,17 +181,20 @@ class EyeExaminationController extends Controller
 
     public function edit(EyeExamination $eyeExamination)
     {
-        return view('eye-examinations.edit', compact('eyeExamination'));
+        $eyeDisorderIds = $eyeExamination->eyeDisorderExaminations->pluck('eye_disorder_id');
+        $pastMedicalIds = $eyeExamination->pastMedicalExaminations->pluck('past_medical_id');
+        $eyeImagesPath = $eyeExamination->eyeImages->pluck('image_path');
+        return view('eye-examinations.edit', compact('eyeExamination', 'eyeDisorderIds', 'pastMedicalIds', 'eyeImagesPath'));
     }
 
     public function update(Request $request, EyeExamination $eyeExamination)
     {
         $rules = [
-            'name' => ['required', 'max:255'],
+            'patient_id' => ['required'],
+            'kader_id' => ['required'],
+            'doctor_id' => ['required'],
+            'examination_date_time' => ['required'],
         ];
-        if (isset($request->password)) {
-            $rules['password'] = $this->passwordRules(false);
-        }
         $request->validate($rules);
         $attr = $request->all();
         $eyeExamination->update($attr);

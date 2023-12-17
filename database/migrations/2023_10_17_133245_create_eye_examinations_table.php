@@ -19,8 +19,6 @@ return new class extends Migration
             $table->datetime('examination_date_time');
             $table->string('right_eye_vision');
             $table->string('left_eye_vision');
-            $table->foreignId('eye_disorder_id')->default(null)->nullable()->constrained('eye_disorders')->onUpdate('cascade')->onDelete('restrict');
-            $table->foreignId('past_medical_id')->default(null)->nullable()->constrained('past_medicals')->onUpdate('cascade')->onDelete('restrict');
             $table->string('other_eye_disorder')->default(null)->nullable();
             $table->string('other_past_medical')->default(null)->nullable();
             $table->string('latitude')->default(null)->nullable();
