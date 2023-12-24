@@ -13,6 +13,11 @@ use Stevebauman\Location\Facades\Location;
 
 class EyeExaminationController extends Controller
 {
+    // public function test(Request $request)
+    // {
+    //     return EyeExamination::with(['eyeDisorders'])->get();
+    // }
+
     public function index(Request $request)
     {
         try {
@@ -107,8 +112,10 @@ class EyeExaminationController extends Controller
 
     private function getColumnHistory($eyeExamination)
     {
-        $text = 'Riwayat keluhan mata: ' . $eyeExamination->eyeDisorder->name;
-        $text .= '<br>Riwayat penyakit dahulu: ' . $eyeExamination->pastMedical->name;
+        // Log::channel('command')->info($eyeExamination->eyeDisorders());
+        // $text = '';
+        $text = 'Riwayat keluhan mata: ' . implode(', ', $eyeExamination->eyeDisorders()->pluck('name')->toArray());
+        $text .= '<br><br>Riwayat penyakit dahulu: ' . implode(', ', $eyeExamination->pastMedicals()->pluck('name')->toArray());
         return $text;
     }
 

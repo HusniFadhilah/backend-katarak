@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\{AuthController, EyeDisorderController, EyeExaminationController, JobController, PastMedicalController, UserController};
+use App\Http\Controllers\API\{AuthController, EyeDisorderController, EyeExaminationController, JobController, PastMedicalController, PatientController, UserController};
 
 /*
 |--------------------------------------------------------------------------
@@ -31,4 +31,5 @@ Route::name('api.')->group(function () {
     Route::get('/past-medical', [PastMedicalController::class, 'index'])->name('past-medical');
     Route::get('/eye-disorder', [EyeDisorderController::class, 'index'])->name('eye-disorder');
     Route::get('/eye-examination', [EyeExaminationController::class, 'index'])->name('eye-examination');
+    Route::post('/patient/store', [PatientController::class, 'store'])->name('patient.store');
 });

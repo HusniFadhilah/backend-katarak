@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Patient extends Model
 {
@@ -26,5 +27,15 @@ class Patient extends Model
     public function eyeExaminations()
     {
         return $this->hasMany(EyeExamination::class);
+    }
+
+    public function getKtpAttribute()
+    {
+        return Crypt::decrypt($this->attributes['ktp']);
+    }
+
+    public function getKtpOriginal()
+    {
+        return $this->attributes['ktp'];
     }
 }

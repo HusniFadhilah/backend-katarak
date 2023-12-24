@@ -38,4 +38,19 @@ class EyeImage extends Model
     {
         return $this->attributes['image_path'];
     }
+
+    public function deleteFile()
+    {
+        if (file_exists(storage_path('app/public/' . $this->getImagePathOriginal())))
+            unlink(storage_path('app/public/' . $this->getImagePathOriginal()));
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($obj) {
+            $obj->deleteFile();
+        });
+    }
 }

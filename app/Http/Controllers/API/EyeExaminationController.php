@@ -37,9 +37,8 @@ class EyeExaminationController extends Controller
                 $eyeExaminations->whereKaderId($kaderId);
             if ($doctorId)
                 $eyeExaminations->whereDoctorId($doctorId);
-
             if ($isAll)
-                $eyeExaminations = $eyeExaminations->with(['patient:id,job_id,name,gender,birth_date,birth_place,address', 'patient.job:id,name', 'kader:id,role_id,name,phone_number,email,is_active,email_verified_at', 'doctor:id,role_id,name,phone_number,email,is_active,email_verified_at', 'eyeDisorderExaminations:eye_examination_id,eye_disorder_id', 'pastMedicalExaminations:eye_examination_id,past_medical_id'])->get();
+                $eyeExaminations = $eyeExaminations->with(['patient:id,ktp,job_id,name,gender,birth_date,birth_place,address', 'patient.job:id,name', 'kader:id,role_id,name,phone_number,email,is_active,email_verified_at', 'doctor:id,role_id,name,phone_number,email,is_active,email_verified_at', 'eyeDisorders', 'pastMedicals'])->get();
             else
                 $eyeExaminations = $eyeExaminations->pluck($pluckKey, 'name');
 
