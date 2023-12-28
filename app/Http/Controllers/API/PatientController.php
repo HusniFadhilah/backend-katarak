@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Helpers\ResponseFormatter;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -20,7 +22,7 @@ class PatientController extends Controller
             $pluckKey = $request->pluck_key ?? 'id';
             $id = $request->id;
             $name = $request->name;
-            $patients = Patient::orderBy('name', 'asc');
+            $patients = Patient::with(['job'])->orderBy('name', 'asc');
             if ($name)
                 $patients->where('name', 'LIKE', '%' . $name . '%');
             if ($id)
@@ -75,12 +77,15 @@ class PatientController extends Controller
             }
 
             $attr = $request->all();
+            $attr['created_by'] = Auth::id();
+            $attr['ktp'] = Crypt::encrypt($request->ktp);
             $patient = Patient::create($attr);
 
             return ResponseFormatter::success([
                 'patient' => $patient
             ], 'Patient have been added');
         } catch (Exception $error) {
+            Log::channel('api')->info($error);
             return ResponseFormatter::error([
                 'message' => 'Terjadi kegagalan, silahkan coba lagi',
                 'error' => $error,

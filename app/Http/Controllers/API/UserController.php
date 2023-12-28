@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Libraries\Fungsi;
 use Illuminate\Http\Request;
 use App\Helpers\ResponseFormatter;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Actions\Fortify\PasswordValidationRules;
 use Illuminate\Support\Facades\{Hash, Auth, Validator};
@@ -45,6 +46,7 @@ class UserController extends Controller
 
             return ResponseFormatter::success($user, 'Profile have been updated');
         } catch (Exception $error) {
+            Log::channel('api')->info($error);
             return ResponseFormatter::error([
                 'message' => 'Terjadi kegagalan, silahkan coba lagi',
                 'error' => $error,
@@ -89,6 +91,7 @@ class UserController extends Controller
                 'user' => $user
             ], 'Password have been updated');
         } catch (Exception $error) {
+            Log::channel('api')->info($error);
             return ResponseFormatter::error([
                 'message' => 'Terjadi kegagalan, silahkan coba lagi',
                 'error' => $error,
