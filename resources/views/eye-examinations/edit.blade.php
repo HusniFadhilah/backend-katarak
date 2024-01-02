@@ -207,8 +207,8 @@
     getDataSelect2('patient_id', '{{ route("getpatients") }}', '- Pilih -', {}, false, '{{ $eyeExamination->patient_id }}', false)
     getDataSelect2('kader_id', '{{ route("getkaders") }}', '- Pilih -', {}, false, '{{ $eyeExamination->kader_id }}', false)
     getDataSelect2('doctor_id', '{{ route("getdoctors") }}', '- Pilih -', {}, false, '{{ $eyeExamination->doctor_id }}', false)
-    getDataSelect2('past_medicals_id', '{{ route("getpastmedicals") }}', '- Pilih -', {}, false, JSON.parse('{{ $pastMedicalIds }}'), false)
-    getDataSelect2('eye_disorders_id', '{{ route("geteyedisorders") }}', '- Pilih -', {}, false, JSON.parse('{{ $eyeDisorderIds }}'), false)
+    getDataSelect2('past_medicals_id', '{{ route("getpastmedicals") }}', '- Pilih -', {}, false, JSON.parse('{{ json_encode($pastMedicalIds) }}'), false)
+    getDataSelect2('eye_disorders_id', '{{ route("geteyedisorders") }}', '- Pilih -', {}, false, JSON.parse('{{ json_encode($eyeDisorderIds) }}'), false)
 
     $('#edit_form').validate({
         rules: {}

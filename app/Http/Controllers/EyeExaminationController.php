@@ -112,8 +112,6 @@ class EyeExaminationController extends Controller
 
     private function getColumnHistory($eyeExamination)
     {
-        // Log::channel('command')->info($eyeExamination->eyeDisorders());
-        // $text = '';
         $text = 'Riwayat keluhan mata: ' . implode(', ', $eyeExamination->eyeDisorders()->pluck('name')->toArray());
         $text .= '<br><br>Riwayat penyakit dahulu: ' . implode(', ', $eyeExamination->pastMedicals()->pluck('name')->toArray());
         return $text;
@@ -188,9 +186,9 @@ class EyeExaminationController extends Controller
 
     public function edit(EyeExamination $eyeExamination)
     {
-        $eyeDisorderIds = $eyeExamination->eyeDisorderExaminations->pluck('eye_disorder_id');
-        $pastMedicalIds = $eyeExamination->pastMedicalExaminations->pluck('past_medical_id');
-        $eyeImagesPath = $eyeExamination->eyeImages->pluck('image_path');
+        $eyeDisorderIds = $eyeExamination->eyeDisorderExaminations->pluck('eye_disorder_id')->toArray();
+        $pastMedicalIds = $eyeExamination->pastMedicalExaminations->pluck('past_medical_id')->toArray();
+        $eyeImagesPath = $eyeExamination->eyeImages->pluck('image_path')->toArray();
         return view('eye-examinations.edit', compact('eyeExamination', 'eyeDisorderIds', 'pastMedicalIds', 'eyeImagesPath'));
     }
 

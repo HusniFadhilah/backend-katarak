@@ -15,7 +15,7 @@ class Fungsi
     public static function compressImage($image, $path, $intensity = 70, $maxWidth = null, $maxHeight = null)
     {
         // Validate image MIME type
-        $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/octet-stream'];
         $mime = $image->getClientMimeType();
 
         if (!in_array($mime, $allowedMimeTypes)) {
@@ -62,7 +62,6 @@ class Fungsi
             Log::channel('command')->info($error);
             return null;
         }
-
         return [$image->getClientOriginalName(), $destinationPath . $file_name];
     }
 
