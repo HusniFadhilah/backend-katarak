@@ -1,6 +1,6 @@
 @extends('layouts.template.auth')
 
-@section('title', 'Register')
+@section('title', 'Daftar Akun Baru')
 
 @section('content')
 <div class="container pt-5">
@@ -54,12 +54,22 @@
                                         @enderror
                                     </div>
                                     <button type="submit" class="btn btn-info btn-user btn-block mt-4">
-                                        Register
+                                        Daftar
                                     </button>
                                 </form>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="card-footer text-center bg-white">
+                    <p class="text-sm mx-auto mb-0">
+                        Lupa password?
+                        <a href="{{ route('password.request') }}" class="text-success font-weight-bold">Reset di sini</a>
+                    </p>
+                    <p class="text-sm mx-auto mb-0">
+                        Sudah punya akun?
+                        <a href="{{ route('login') }}" class="text-primary font-weight-bold">Masuk di sini</a>
+                    </p>
                 </div>
             </div>
         </div>

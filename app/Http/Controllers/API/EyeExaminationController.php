@@ -26,6 +26,7 @@ class EyeExaminationController extends Controller
             $search = $request->search;
             $kaderId = $request->kader_id;
             $doctorId = $request->doctor_id;
+            $status = $request->status;
             $eyeExaminations = EyeExamination::orderBy('examination_date_time', 'desc');
             if ($name)
                 $eyeExaminations->whereHas('patient', function ($q) use ($name) {
@@ -41,6 +42,8 @@ class EyeExaminationController extends Controller
                 $eyeExaminations->whereKaderId($kaderId);
             if ($doctorId)
                 $eyeExaminations->whereDoctorId($doctorId);
+            if ($status)
+                $eyeExaminations->whereStatus($status);
             if ($isAll)
                 $eyeExaminations = $eyeExaminations->with(['patient:id,ktp,job_id,name,gender,birth_date,birth_place,address', 'patient.job:id,name', 'kader:id,role_id,name,phone_number,email,is_active,email_verified_at', 'doctor:id,role_id,name,phone_number,email,is_active,email_verified_at', 'eyeDisorders', 'pastMedicals', 'eyeImages'])->get();
             else
@@ -179,6 +182,48 @@ class EyeExaminationController extends Controller
                 'message' => 'Terjadi kegagalan, silahkan coba lagi',
                 'error' => $error,
             ], 'Delete eye examination failed', 500);
+        }
+    }
+
+    public function confirm(Request $request, $id)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'status' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error([
+                    'error' => $validator->errors(),
+                    'message' => 'Harap isi form dengan benar'
+                ], 'Change examination status failed', 422);
+            }
+
+            $user = Auth::user();
+            $examination = EyeExamination::find($id);
+            if (!$examination) {
+                return ResponseFormatter::error([
+                    'error' => null,
+                    'message' => 'Data pemeriksaan mata tidak ada'
+                ], 'Change examination status failed', 404);
+            }
+            if ($examination->doctor_id != null)
+                if ($user->id != $examination->doctor_id) {
+                    return ResponseFormatter::error([
+                        'error' => null,
+                        'message' => 'Maaf, terdapat perbedaan dokter yang melakukan pemeriksaan'
+                    ], 'Change examination status failed', 403);
+                }
+
+            Log::channel('api')->info('', $request->all());
+            $examination->update($request->all());
+            return ResponseFormatter::success($examination, 'Change examination status successfull');
+        } catch (Exception $error) {
+            Log::channel('api')->info($error);
+            return ResponseFormatter::error([
+                'message' => 'Terjadi kegagalan, silahkan coba lagi',
+                'error' => $error,
+            ], 'Change examination status failed', 500);
         }
     }
 }

@@ -72,4 +72,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(EyeExamination::class, 'doctor_id', 'id');
     }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\CustomResetPassword($token, $this->name));
+    }
 }

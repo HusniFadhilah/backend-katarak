@@ -61,6 +61,16 @@
                         </div>
                     </div>
                 </div>
+                <div class="card-footer text-center bg-white">
+                    <p class="text-sm mx-auto mb-0">
+                        Lupa password?
+                        <a href="{{ route('password.request') }}" class="text-success font-weight-bold">Reset di sini</a>
+                    </p>
+                    <p class="text-sm mx-auto mb-0">
+                        Belum punya akun?
+                        <a href="{{ route('register') }}" class="text-primary font-weight-bold">Daftar di sini</a>
+                    </p>
+                </div>
             </div>
         </div>
     </div>

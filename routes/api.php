@@ -22,18 +22,21 @@ Route::name('api.')->group(function () {
         Route::get('user', [UserController::class, 'fetch']);
         Route::post('changepassword', [UserController::class, 'changePassword']);
         Route::post('logout', [AuthController::class, 'logout']);
-        Route::get('/job', [JobController::class, 'index'])->name('job');
-        Route::get('/past-medical', [PastMedicalController::class, 'index'])->name('past-medical');
-        Route::get('/eye-disorder', [EyeDisorderController::class, 'index'])->name('eye-disorder');
-        Route::get('/eye-examination', [EyeExaminationController::class, 'index'])->name('eye-examination');
-        Route::get('/patient', [PatientController::class, 'index'])->name('patient');
-        Route::post('/patient/store', [PatientController::class, 'store'])->name('patient.store');
+        Route::post('changepassword', [UserController::class, 'changePassword']);
+        Route::get('job', [JobController::class, 'index'])->name('job');
+        Route::get('past-medical', [PastMedicalController::class, 'index'])->name('past-medical');
+        Route::get('eye-disorder', [EyeDisorderController::class, 'index'])->name('eye-disorder');
+        Route::get('eye-examination', [EyeExaminationController::class, 'index'])->name('eye-examination');
+        Route::get('patient', [PatientController::class, 'index'])->name('patient');
+        Route::post('patient/store', [PatientController::class, 'store'])->name('patient.store');
 
-        Route::post('/eye-examination/store', [EyeExaminationController::class, 'store'])->name('eye-examination.store');
-        Route::delete('/eye-examination/{id}/destroy', [EyeExaminationController::class, 'destroy'])->name('eye-examination.destroy');
-        Route::post('/eye-examination/image/{id}/store', [EyeExaminationController::class, 'uploadImage'])->name('eye-examination.upload-image');
-        Route::post('/eye-examination/image/multiple/{id}/store', [EyeImageController::class, 'uploadMultipleImage']);
+        Route::post('eye-examination/store', [EyeExaminationController::class, 'store'])->name('eye-examination.store');
+        Route::delete('eye-examination/{id}/destroy', [EyeExaminationController::class, 'destroy'])->name('eye-examination.destroy');
+        Route::post('eye-examination/{id}/confirm', [EyeExaminationController::class, 'confirm']);
+        Route::post('eye-examination/image/{id}/store', [EyeExaminationController::class, 'uploadImage'])->name('eye-examination.upload-image');
+        Route::post('eye-examination/image/multiple/{id}/store', [EyeImageController::class, 'uploadMultipleImage']);
     });
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/register', [AuthController::class, 'register']);
+
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register']);
 });
