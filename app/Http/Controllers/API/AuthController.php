@@ -49,14 +49,6 @@ class AuthController extends Controller
                     'message' => 'Akun tidak terdaftar'
                 ], 'Authentication failed', 404);
             }
-            // if (!$user->is_active)
-            //     return ResponseFormatter::error([
-            //         'message' => 'Akun Anda telah dinonaktifkan'
-            //     ], 'Authentication failed', 404);
-            // if (!$user->is_verified)
-            //     return ResponseFormatter::error([
-            //         'message' => 'Akun Anda tidak terverifikasi'
-            //     ], 'Authentication failed', 404);
             $check = false;
             foreach (Auth::user()->tokens as $token) {
                 if ($token->token == hash('sha256', substr($request->header('HasToken'), -40))) {

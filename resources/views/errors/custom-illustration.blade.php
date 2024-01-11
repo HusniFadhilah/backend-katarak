@@ -208,11 +208,11 @@
     <!-- Content except illustration -->
     <div class="content">
 
-        <!-- AUDI's logo container -->
+        <!-- logo container -->
         <div class="container class-logo">
-            <img src="{{ asset('assets/img/logo/logo-bg.png') }}" alt="AUDI Logo" class="logo">
+            <img src="{{ asset('assets/img/logo/logo-long.png') }}" alt="logo" class="logo">
         </div>
-        <!-- End of AUDI's logo container -->
+        <!-- End of logo container -->
 
         <!-- Main title -->
         <div class="container main-title">
