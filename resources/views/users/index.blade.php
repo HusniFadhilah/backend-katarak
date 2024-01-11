@@ -47,7 +47,11 @@
                                     <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink" style="">
-                                    <a class="dropdown-item tombol-bulk-konfirmasi-custom" href="{{ route('user.bulkdestroy') }}" data-message="User yang dipilih ini akan dihapus" data-id-form="bulk-user-form">Hapus <span class="text-info">user</span> yang dipilih</a>
+                                    <a href="{{ route('user.bulkdestroy') }}" class="dropdown-item tombol-bulk-konfirmasi-custom" data-message="User yang dipilih ini akan dihapus" data-id-form="bulk-user-form"><span class="text-danger">Hapus user</span> yang dipilih</a>
+                                    <a href="{{ route('user.bulkactive') }}" class="dropdown-item tombol-bulk-konfirmasi-custom" data-message="User yang dipilih ini akan diaktifkan" data-id-form="bulk-user-form"><span class="text-info">Aktifkan user</span> yang dipilih</a>
+                                    <a href="{{ route('user.bulkverify') }}" class="dropdown-item tombol-bulk-konfirmasi-custom" data-message="User yang dipilih ini akan diverifikasi" data-id-form="bulk-user-form"><span class="text-success">Verifikasi user</span> yang dipilih</a>
+                                    <a href="{{ route('user.bulkcancel') }}" class="dropdown-item tombol-bulk-konfirmasi-custom" data-message="User yang dipilih ini akan dibatalkan verifikasinya" data-id-form="bulk-user-form"><span class="text-secondary">Batalkan verifikasi user</span> yang dipilih</a>
+                                    <a href="{{ route('user.bulkpassive') }}" class="dropdown-item tombol-bulk-konfirmasi-custom" data-message="User yang dipilih ini akan dinonaktifkan" data-id-form="bulk-user-form"><span class="text-warning">Nonaktifkan user</span> yang dipilih</a>
                                 </div>
                             </span>
                         </div>

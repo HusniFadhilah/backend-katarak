@@ -80,7 +80,7 @@ class UserController extends Controller
             $row['DT_RowIndex'] =  $no;
             $row['name'] = $user->name;
             $row['email'] = $user->email;
-            $row['role'] = '<span class="badge badge-sm badge-dark">' . $user->role->alias . '</span>';
+            $row['role'] = Fungsi::getRoleTextUser($user);
             $row['action'] = $this->getColumnAction($user);
 
             $data[] = $row;
@@ -186,6 +186,144 @@ class UserController extends Controller
                 Fungsi::sweetalert('Beberapa user tidak dapat dihapus, yaitu: ' . (implode(', ', $notEligibleDeleteUser)), 'error', 'Gagal!');
             }
         }
+        return back();
+    }
+
+    public function reject(User $user)
+    {
+        $user->update(['is_verified' => 0]);
+        // Show success message using Fungsi::sweetalert
+        Fungsi::sweetalert('User berhasil ditolak', 'success', 'Berhasil!');
+        // Redirect back
+        return back();
+    }
+
+    public function verify(User $user)
+    {
+        $user->update(['is_verified' => 1]);
+        // Show success message using Fungsi::sweetalert
+        Fungsi::sweetalert('User berhasil diverifikasi', 'success', 'Berhasil!');
+        // Redirect back
+        return back();
+    }
+
+    /**
+     * Bulk update users to passive status.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function bulkPassive(Request $request)
+    {
+        // Get the checked users
+        $checks = $request->checked;
+
+        // Check if any users are selected
+        if (!isset($checks)) {
+            Fungsi::sweetalert('Tidak ada user yang dipilih', 'warning', 'Perhatian!');
+        } else {
+            // Get the users based on the checked IDs
+            $users = User::whereIn('id', $checks)->get();
+
+            // Update users to passive
+            foreach ($users as $participant) {
+                $participant->update(['is_active' => 0]);
+            }
+
+            Fungsi::sweetalert('User yang dipilih berhasil dinonaktifkan', 'success', 'Berhasil!');
+        }
+
+        // Redirect back
+        return back();
+    }
+
+    /**
+     * Bulk update users to active status.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function bulkActive(Request $request)
+    {
+        // Get the checked users
+        $checks = $request->checked;
+
+        // Check if any users are selected
+        if (!isset($checks)) {
+            Fungsi::sweetalert('Tidak ada user yang dipilih', 'warning', 'Perhatian!');
+        } else {
+            // Get the users based on the checked IDs
+            $users = User::whereIn('id', $checks)->get();
+
+            // Update users to active
+            foreach ($users as $participant) {
+                $participant->update(['is_active' => 1]);
+            }
+
+            Fungsi::sweetalert('User yang dipilih berhasil diaktifkan', 'success', 'Berhasil!');
+        }
+
+        // Redirect back
+        return back();
+    }
+
+    /**
+     * Bulk cancel verification for users.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function bulkCancel(Request $request)
+    {
+        // Get the checked users
+        $checks = $request->checked;
+
+        // Check if any users are selected
+        if (!isset($checks)) {
+            Fungsi::sweetalert('Tidak ada user yang dipilih', 'warning', 'Perhatian!');
+        } else {
+            // Get the users based on the checked IDs
+            $users = User::whereIn('id', $checks)->get();
+
+            // Update users to inactive and unverified
+            foreach ($users as $participant) {
+                $participant->update(['is_active' => 0, 'is_verified' => 0]);
+            }
+
+            Fungsi::sweetalert('User yang dipilih berhasil dibatalkan verifikasinya', 'success', 'Berhasil!');
+        }
+
+        // Redirect back
+        return back();
+    }
+
+    /**
+     * Bulk verify users.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function bulkVerify(Request $request)
+    {
+        // Get the checked users
+        $checks = $request->checked;
+
+        // Check if any users are selected
+        if (!isset($checks)) {
+            Fungsi::sweetalert('Tidak ada user yang dipilih', 'warning', 'Perhatian!');
+        } else {
+            // Get the users based on the checked IDs
+            $users = User::whereIn('id', $checks)->get();
+
+            // Update users to active and verified
+            foreach ($users as $participant) {
+                $participant->update(['is_active' => 1, 'is_verified' => 1]);
+            }
+
+            Fungsi::sweetalert('User yang dipilih berhasil diverifikasi', 'success', 'Berhasil!');
+        }
+
+        // Redirect back
         return back();
     }
 }

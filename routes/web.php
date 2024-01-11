@@ -28,17 +28,26 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+    Route::get('/checkstatus', [HomeController::class, 'checkStatus'])->name('checkstatus');
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-
-    Route::post('/user/bulkdestroy', [App\Http\Controllers\UserController::class, 'bulkDestroy'])->name('user.bulkdestroy');
-    Route::delete('/user/{user}/destroy', [UserController::class, 'destroy'])->name('user.destroy');
-    Route::resource('/user', UserController::class, [
-        'names' => [
-            'index' => 'user',
-            'create' => 'user.create',
-            'destroy' => 'user.delete'
-        ]
-    ]);
+    Route::middleware('role:admin')
+        ->group(function () {
+            Route::post('/user/bulkactive', [App\Http\Controllers\UserController::class, 'bulkActive'])->name('user.bulkactive');
+            Route::post('/user/bulkpassive', [App\Http\Controllers\UserController::class, 'bulkPassive'])->name('user.bulkpassive');
+            Route::post('/user/bulkverify', [App\Http\Controllers\UserController::class, 'bulkVerify'])->name('user.bulkverify');
+            Route::post('/user/bulkcancel', [App\Http\Controllers\UserController::class, 'bulkCancel'])->name('user.bulkcancel');
+            Route::post('/user/bulkdestroy', [App\Http\Controllers\UserController::class, 'bulkDestroy'])->name('user.bulkdestroy');
+            Route::post('/user/{user}/verify', [UserController::class, 'verify'])->name('user.verify');
+            Route::post('/user/{user}/reject', [UserController::class, 'reject'])->name('user.reject');
+            Route::delete('/user/{user}/destroy', [UserController::class, 'destroy'])->name('user.destroy');
+            Route::resource('/user', UserController::class, [
+                'names' => [
+                    'index' => 'user',
+                    'create' => 'user.create',
+                    'destroy' => 'user.delete'
+                ]
+            ]);
+        });
 
     Route::post('/patient/bulkdestroy', [App\Http\Controllers\PatientController::class, 'bulkDestroy'])->name('patient.bulkdestroy');
     Route::delete('/patient/{patient}/destroy', [PatientController::class, 'destroy'])->name('patient.destroy');

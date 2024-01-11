@@ -49,6 +49,14 @@ class AuthController extends Controller
                     'message' => 'Akun tidak terdaftar'
                 ], 'Authentication failed', 404);
             }
+            // if (!$user->is_active)
+            //     return ResponseFormatter::error([
+            //         'message' => 'Akun Anda telah dinonaktifkan'
+            //     ], 'Authentication failed', 404);
+            // if (!$user->is_verified)
+            //     return ResponseFormatter::error([
+            //         'message' => 'Akun Anda tidak terverifikasi'
+            //     ], 'Authentication failed', 404);
             $check = false;
             foreach (Auth::user()->tokens as $token) {
                 if ($token->token == hash('sha256', substr($request->header('HasToken'), -40))) {
@@ -97,6 +105,7 @@ class AuthController extends Controller
             $niceNames = array(
                 'name' => 'nama lengkap',
                 'phone_number' => 'no HP',
+                'role_id' => 'role',
             );
 
             $validator = Validator::make(
@@ -105,11 +114,11 @@ class AuthController extends Controller
                     'name' => ['required', 'string', 'max:255'],
                     'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
                     'phone_number' => ['required', 'max:15', 'phone_number'],
-                    'address' => ['required', 'string', 'max:255'],
+                    'role_id' => ['required'],
                     'password' => 'required|min:6',
                 ],
                 [
-                    'email.unique' => 'Email sudah pernah digunakan sebelumnya, silahkan hubungi doltinukuid@gmail.com untuk bantuan',
+                    'email.unique' => 'Email sudah pernah digunakan sebelumnya, silahkan hubungi admin untuk bantuan',
                 ],
                 $niceNames
             );
@@ -126,8 +135,8 @@ class AuthController extends Controller
                 'role_id' => $request->role_id,
                 'email' => $email,
                 'phone_number' => $request->phone_number,
-                'address' => $request->address,
                 'is_active' => 1,
+                'is_verified' => 0,
                 'password' => Hash::make($request->password),
             ]);
 

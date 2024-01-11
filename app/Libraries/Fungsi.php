@@ -128,4 +128,24 @@ class Fungsi
     {
         return $number !== null ? number_format((float)$number, $digits, '.', '') : '-';
     }
+
+    public static function getRoleTextUser($user, $isTextOnly = true)
+    {
+        $roletext = '';
+        $roleAlias = $user->role->alias;
+        $roletext .= '<div>' . ($user->role_id != null ? $roleAlias : "Guest") . '</div>';
+        $roletext .= '<small>Status Akun: </small>';
+        if ($user->is_active) {
+            $roletext .= ' <span class="badge badge-info">Aktif</span>';
+        } else {
+            $roletext .= ' <span class="badge badge-light">Tidak Aktif</span>';
+        }
+
+        if ($user->is_verified) {
+            $roletext .= ' <span class="badge badge-success">Terverifikasi</span>';
+        } else {
+            $roletext .= ' <span class="badge badge-light">Tidak Terverifikasi</span>';
+        }
+        return $roletext;
+    }
 }

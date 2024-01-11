@@ -16,7 +16,9 @@ class HomeController extends Controller
     {
         $user = Auth::user();
         if ($user) {
-            return redirect()->route('dashboard');
+            if ($user->is_active && $user->is_verified)
+                return redirect()->route('dashboard');
+            return view('auth.check-status', compact('user'));
         }
     }
 }

@@ -19,6 +19,7 @@ class EyeExaminationController extends Controller
     public function index(Request $request)
     {
         try {
+            // Log::channel('api')->info($request);
             $isAll = $request->is_all ?? true;
             $pluckKey = $request->pluck_key ?? 'id';
             $id = $request->id;
@@ -26,7 +27,10 @@ class EyeExaminationController extends Controller
             $search = $request->search;
             $kaderId = $request->kader_id;
             $doctorId = $request->doctor_id;
-            $status = $request->status;
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+            $patientId = $request->patient_id;
+            $statuses = $request->statuses;
             $eyeExaminations = EyeExamination::orderBy('examination_date_time', 'desc');
             if ($name)
                 $eyeExaminations->whereHas('patient', function ($q) use ($name) {
@@ -40,10 +44,16 @@ class EyeExaminationController extends Controller
                 $eyeExaminations->whereId($id);
             if ($kaderId)
                 $eyeExaminations->whereKaderId($kaderId);
+            if ($patientId)
+                $eyeExaminations->wherePatientId($patientId);
             if ($doctorId)
                 $eyeExaminations->whereDoctorId($doctorId);
-            if ($status)
-                $eyeExaminations->whereStatus($status);
+            if ($statuses)
+                $eyeExaminations->whereIn('status', explode(',', $statuses));
+            if ($startDate)
+                $eyeExaminations->whereDate('examination_date_time', '>=', $startDate);
+            if ($endDate)
+                $eyeExaminations->whereDate('examination_date_time', '<=', $endDate);
             if ($isAll)
                 $eyeExaminations = $eyeExaminations->with(['patient:id,ktp,job_id,name,gender,birth_date,birth_place,address', 'patient.job:id,name', 'kader:id,role_id,name,phone_number,email,is_active,email_verified_at', 'doctor:id,role_id,name,phone_number,email,is_active,email_verified_at', 'eyeDisorders', 'pastMedicals', 'eyeImages'])->get();
             else
