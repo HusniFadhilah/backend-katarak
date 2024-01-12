@@ -151,6 +151,7 @@ class EyeExaminationController extends Controller
         $attr = $request->all();
         $attr['latitude'] = $currentUserInfo ? $currentUserInfo->latitude : '';
         $attr['longitude'] = $currentUserInfo ? $currentUserInfo->longitude : '';
+        $attr['formatted_location'] = $this->getFormattedLocation($attr['latitude'], $attr['longitude']);
         $eyeExamination = EyeExamination::create($attr);
         $imagePath = Fungsi::compressImage($request->file('image'), 'eye-examination/');
         if (!$imagePath) {
@@ -163,6 +164,26 @@ class EyeExaminationController extends Controller
         $this->insertData($request->past_medicals_id, new PastMedicalExamination, $eyeExamination, 'past_medical_id', 'pastMedicalExaminations');
         Fungsi::sweetalert('Data pemeriksaan mata berhasil ditambahkan', 'success', 'Berhasil!');
         return redirect(route('eye-examination'));
+    }
+
+    private function getFormattedLocation($latitude, $longitude)
+    {
+        $apiKey = '9e304c7d13924b718d56a78553dd1b01';
+        $apiUrl = 'https://api.opencagedata.com/geocode/v1/json';
+
+        $url = "$apiUrl?key=$apiKey&q=$latitude,$longitude&no_annotations=1";
+        $response = file_get_contents($url);
+
+        if ($response !== false) {
+            $data = json_decode($response, true);
+
+            $results = $data['results'];
+            if (!empty($results)) {
+                $formattedLocation = $results[0]['formatted'];
+            }
+        }
+
+        return $formattedLocation ?? null;
     }
 
     private function insertData($ids, $model, $eyeExamination, $column, $relationName)

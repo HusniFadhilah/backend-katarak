@@ -1,9 +1,5 @@
 /vendor/*
 .vscode
-/public/assets/plugins/*
-public/assets/plugins/*
-/public/assets/plugins
-public/assets/plugins
 /public/gs/*
 public/gs/*
 /public/gs

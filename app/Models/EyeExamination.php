@@ -10,7 +10,7 @@ class EyeExamination extends Model
     use HasFactory;
 
     protected $fillable = [
-        'patient_id', 'kader_id', 'doctor_id', 'examination_date_time', 'right_eye_vision', 'left_eye_vision', 'other_eye_disorder', 'other_past_medical', 'latitude', 'longitude', 'status', 'evaluation_description'
+        'patient_id', 'kader_id', 'doctor_id', 'examination_date_time', 'right_eye_vision', 'left_eye_vision', 'other_eye_disorder', 'other_past_medical', 'latitude', 'longitude', 'formatted_location', 'status', 'evaluation_description'
     ];
 
     public function patient()

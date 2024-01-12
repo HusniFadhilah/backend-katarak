@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('other_past_medical')->default(null)->nullable();
             $table->string('latitude')->default(null)->nullable();
             $table->string('longitude')->default(null)->nullable();
+            $table->text('formatted_location')->default(null)->nullable();
             $table->enum('status', ['wait', 'abnormal', 'normal']);
             $table->text('evaluation_description')->default(null)->nullable();
             $table->timestamps();
