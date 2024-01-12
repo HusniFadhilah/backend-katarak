@@ -55,7 +55,7 @@
 </li>
 <li class="nav-item{{ request()->is('eye-disorder','eye-disorder/*') ? ' active' : ''}}">
     <a class="nav-link" href="{{ route('eye-disorder') }}">
-        <i class="icon-eye"></i>
+        <i class="fa fa-eye"></i>
         <span>Kelola Data Keluhan Mata</span>
     </a>
 </li>

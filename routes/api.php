@@ -22,7 +22,6 @@ Route::name('api.')->group(function () {
         Route::get('user', [UserController::class, 'fetch']);
         Route::post('changepassword', [UserController::class, 'changePassword']);
         Route::post('logout', [AuthController::class, 'logout']);
-        Route::post('changepassword', [UserController::class, 'changePassword']);
         Route::get('job', [JobController::class, 'index'])->name('job');
         Route::get('past-medical', [PastMedicalController::class, 'index'])->name('past-medical');
         Route::get('eye-disorder', [EyeDisorderController::class, 'index'])->name('eye-disorder');
@@ -36,7 +35,7 @@ Route::name('api.')->group(function () {
         Route::post('eye-examination/image/{id}/store', [EyeExaminationController::class, 'uploadImage'])->name('eye-examination.upload-image');
         Route::post('eye-examination/image/multiple/{id}/store', [EyeImageController::class, 'uploadMultipleImage']);
     });
-
+    Route::post('forgotpassword', [AuthController::class, 'forgotPassword']);
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
 });
