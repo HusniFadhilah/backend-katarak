@@ -88,11 +88,11 @@
                     </div>
                     <div class="row">
                         <div class="col-lg-2">
-                            <label>Tanggal pemeriksaan *</label>
+                            <label>Waktu & Tanggal pemeriksaan *</label>
                         </div>
                         <div class="col-lg-10">
                             <div class="form-group">
-                                <input type="date" class="form-control @error('examination_date_time') is-invalid @enderror" name="examination_date_time" placeholder="Tanggal pemeriksaan" value="{{ old('examination_date_time',\Carbon\Carbon::parse($eyeExamination->examination_date_time)->format('Y-m-d')) }}" required>
+                                <input type="datetime-local" class="form-control @error('examination_date_time') is-invalid @enderror" name="examination_date_time" placeholder="Tanggal pemeriksaan" value="{{ old('examination_date_time',$eyeExamination->examination_date_time) }}" required>
                                 @error('examination_date_time')
                                 <span class="invalid-feedback" role="alert">
                                     {{ $message }}
@@ -165,6 +165,38 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <label>Catatan Pemeriksaan Dokter</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <div class="form-group">
+                                <textarea class="form-control @error('evaluation_description') is-invalid @enderror" name="evaluation_description" rows="5" placeholder="Catatan pemeriksaan dari dokter" value="{{ old('evaluation_description',$eyeExamination->evaluation_description) }}"></textarea>
+                                @error('evaluation_description')
+                                <span class="invalid-feedback" role="alert">
+                                    {{ $message }}
+                                </span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    @if($eyeExamination->formatted_location)
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <label>Lokasi Pemeriksaan Pasien</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <div class="form-group">
+                                <input type="text" class="form-control @error('formatted_location') is-invalid @enderror" name="formatted_location" placeholder="Lokasi pemeriksaan pasien" value="{{ old('formatted_location',$eyeExamination->formatted_location.'. Lat & long: '.$eyeExamination->latitude.' & '.$eyeExamination->longitude) }}" readonly>
+                                @error('formatted_location')
+                                <span class="invalid-feedback" role="alert">
+                                    {{ $message }}
+                                </span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                     <div class="row">
                         <div class="col-lg-2">
                             <label>Foto Mata *</label>

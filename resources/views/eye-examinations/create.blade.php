@@ -6,8 +6,6 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/plugins/dropzone/min/dropzone.min.css') }}">
-<!-- Daterange picker -->
-<link rel="stylesheet" href="{{ asset('assets/plugins/daterangepicker/daterangepicker.css') }}">
 @endpush
 
 @section('content')
@@ -88,13 +86,7 @@
                         </div>
                         <div class="col-lg-10">
                             <div class="form-group">
-                                <div class="input-group date datetimepicker" id="examination_date_time" data-target-input="nearest">
-                                    <div class="input-group-append" data-target="#examination_date_time" data-toggle="datetimepicker">
-                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                    </div>
-                                    <input type="text" name="examination_date_time" class="form-control datetimepicker-input @error('examination_date_time') is-invalid @enderror" data-target="#examination_date_time" />
-                                </div>
-                                {{-- <input type="date_time" class="form-control @error('examination_date_time') is-invalid @enderror" name="examination_date_time" placeholder="Tanggal pemeriksaan" value="{{ old('examination_date_time') }}" required> --}}
+                                <input type="datetime-local" class="form-control @error('examination_date_time') is-invalid @enderror" name="examination_date_time" placeholder="Tanggal pemeriksaan" value="{{ old('examination_date_time') }}" required>
                                 @error('examination_date_time')
                                 <span class="invalid-feedback" role="alert">
                                     {{ $message }}
@@ -169,6 +161,21 @@
                     </div>
                     <div class="row">
                         <div class="col-lg-2">
+                            <label>Catatan Pemeriksaan Dokter</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <div class="form-group">
+                                <textarea class="form-control @error('evaluation_description') is-invalid @enderror" name="evaluation_description" rows="5" placeholder="Catatan pemeriksaan dari dokter" value="{{ old('evaluation_description') }}"></textarea>
+                                @error('evaluation_description')
+                                <span class="invalid-feedback" role="alert">
+                                    {{ $message }}
+                                </span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2">
                             <label>Foto Mata *</label>
                         </div>
                         <div class="col-lg-4">
@@ -206,7 +213,6 @@
 
 @push('scripts')
 <script src="{{ asset('assets/plugins/dropzone/min/dropzone.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/daterangepicker/daterangepicker.js') }}"></script>
 <script>
     getDataSelect2Search('patient_id', '{{ route("getpatients") }}', '- Pilih -', 0, false, {}, true)
     getDataSelect2Search('kader_id', '{{ route("getkaders") }}', '- Pilih -', 0, false, {}, true)
@@ -227,12 +233,6 @@
         }
         , unhighlight: function(element, errorClass, validClass) {
             $(element).removeClass('is-invalid');
-        }
-    });
-
-    $('.datetimepicker,#datetimepicker').datetimepicker({
-        icons: {
-            time: 'far fa-clock'
         }
     });
 

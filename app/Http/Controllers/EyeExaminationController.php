@@ -9,6 +9,7 @@ use App\Models\{EyeDisorderExamination, EyeExamination, EyeImage, PastMedicalExa
 use App\Helpers\ResponseFormatter;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
 use Stevebauman\Location\Facades\Location;
 
 class EyeExaminationController extends Controller
@@ -151,7 +152,8 @@ class EyeExaminationController extends Controller
         $attr = $request->all();
         $attr['latitude'] = $currentUserInfo ? $currentUserInfo->latitude : '';
         $attr['longitude'] = $currentUserInfo ? $currentUserInfo->longitude : '';
-        $attr['formatted_location'] = $this->getFormattedLocation($attr['latitude'], $attr['longitude']);
+        if ($currentUserInfo)
+            $attr['formatted_location'] = $this->getFormattedLocation($attr['latitude'], $attr['longitude']);
         $eyeExamination = EyeExamination::create($attr);
         $imagePath = Fungsi::compressImage($request->file('image'), 'eye-examination/');
         if (!$imagePath) {
@@ -172,14 +174,16 @@ class EyeExaminationController extends Controller
         $apiUrl = 'https://api.opencagedata.com/geocode/v1/json';
 
         $url = "$apiUrl?key=$apiKey&q=$latitude,$longitude&no_annotations=1";
-        $response = file_get_contents($url);
-
+        $response = Http::get($url)->json();
         if ($response !== false) {
-            $data = json_decode($response, true);
+            $data = $response;
 
             $results = $data['results'];
             if (!empty($results)) {
                 $formattedLocation = $results[0]['formatted'];
+            }
+            if ($data['status']['code'] != 200) {
+                Log::channel('command')->info('Error get location');
             }
         }
 

@@ -89,7 +89,7 @@ class PatientController extends Controller
 
     private function getColumnKTP($patient)
     {
-        return '<span class="badge badge-light btn-toggle-character" data-id="' . $patient->id . '" data-route="' . route('getshowktp') . '" data-title-hidden="ktp" data-hidden="" data-timeout="7000"><span class="text">Lihat KTP</span> <i class="fa fa-eye ml-2"></i></span>';
+        return '<span class="badge badge-light btn-toggle-character" data-id="' . $patient->id . '" data-route="' . route('getshowktp') . '" data-title-hidden="ktp" data-hidden="" data-timeout="7000"><span class="text">Show KTP</span> <i class="fa fa-eye ml-2"></i></span>';
     }
 
     private function getColumnAction($patient)
