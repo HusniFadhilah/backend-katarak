@@ -78,7 +78,7 @@ class PatientController extends Controller
 
             $attr = $request->all();
             $attr['created_by'] = Auth::id();
-            $attr['ktp'] = Crypt::encrypt($request->ktp);
+            $attr['ktp'] = encrypt($request->ktp);
             $patient = Patient::create($attr);
 
             return ResponseFormatter::success([
@@ -90,6 +90,27 @@ class PatientController extends Controller
                 'message' => 'Terjadi kegagalan, silahkan coba lagi',
                 'error' => $error,
             ], 'Add patient failed', 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $patient = Patient::find($id);
+            if (!isset($patient)) {
+                return ResponseFormatter::error([
+                    'message' => 'Data pasien tidak ditemukan',
+                ], 'Patient not found', 404);
+            }
+
+            $patient->delete();
+            return ResponseFormatter::success(null, 'Patient Have Been Deleted');
+        } catch (Exception $error) {
+            Log::channel('api')->info($error);
+            return ResponseFormatter::error([
+                'message' => 'Terjadi kegagalan, silahkan coba lagi',
+                'error' => $error,
+            ], 'Delete patient failed', 500);
         }
     }
 }

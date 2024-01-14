@@ -28,6 +28,7 @@ Route::name('api.')->group(function () {
         Route::get('eye-examination', [EyeExaminationController::class, 'index'])->name('eye-examination');
         Route::get('patient', [PatientController::class, 'index'])->name('patient');
         Route::post('patient/store', [PatientController::class, 'store'])->name('patient.store');
+        Route::delete('patient/{id}/destroy', [PatientController::class, 'destroy'])->name('patient.destroy');
 
         Route::post('eye-examination/store', [EyeExaminationController::class, 'store'])->name('eye-examination.store');
         Route::delete('eye-examination/{id}/destroy', [EyeExaminationController::class, 'destroy'])->name('eye-examination.destroy');

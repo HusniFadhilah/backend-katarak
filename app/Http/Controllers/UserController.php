@@ -18,6 +18,21 @@ class UserController extends Controller
 {
     use PasswordValidationRules;
 
+    public function test()
+    {
+        // $response = \Illuminate\Support\Facades\Http::withHeaders([
+        //     'Content-Type' => 'application/json',
+        // ])->post('https://qpix.doltinuku.id/api/register', ['name' => 'test'])->json();
+        $users = User::whereRoleId(3)->get();
+        $response = Fungsi::sendNotification($users);
+        return $response;
+        // $token = [];
+        // foreach (User::all() as $user) {
+        //     array_push($token, $user->tokens()->get());
+        // }
+        // dd($token);
+    }
+
     public function index(Request $request)
     {
         try {

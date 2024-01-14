@@ -4,6 +4,7 @@ namespace App\Libraries;
 
 use Exception;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\{Auth, File, Log};
 use Intervention\Image\ImageManagerStatic as Image;
 
@@ -147,5 +148,64 @@ class Fungsi
             $roletext .= ' <span class="badge badge-light">Tidak Terverifikasi</span>';
         }
         return $roletext;
+    }
+
+    public static function getFormattedLocation($latitude, $longitude)
+    {
+        $apiKey = '9e304c7d13924b718d56a78553dd1b01';
+        $apiUrl = 'https://api.opencagedata.com/geocode/v1/json';
+
+        $url = "$apiUrl?key=$apiKey&q=$latitude,$longitude&no_annotations=1";
+        $response = Http::get($url)->json();
+        if ($response !== false) {
+            $data = $response;
+
+            $results = $data['results'];
+            if (!empty($results)) {
+                $formattedLocation = $results[0]['formatted'];
+            }
+            if ($data['status']['code'] != 200) {
+                Log::channel('command')->info('Error get location');
+            }
+        }
+
+        return $formattedLocation ?? null;
+    }
+
+    public static function sendNotification($users)
+    {
+        try {
+            $serverKey = env('SERVER_KEY_FIREBASE');
+            $apiUrl = 'https://fcm.googleapis.com/fcm/send';
+            $statuses = [];
+            foreach ($users as $user) {
+                foreach ($user->tokens()->get() as $personalAccessToken) {
+                    $notificationPayload = [
+                        'notification' => [
+                            'title' => 'You have a new notification',
+                            'body' => 'This is a body text',
+                        ],
+                        'data' => (object)[],
+                        'to' => $personalAccessToken->fcm_token
+                    ];
+
+                    $client = new \GuzzleHttp\Client();
+                    $response = $client->post($apiUrl, [
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $serverKey,
+                            'Accept' => 'application/json',
+                            'Content-Type' => 'application/json',
+                        ],
+                        'body' => json_encode($notificationPayload),
+                    ]);
+
+                    $response = json_decode($response->getBody(), true);
+                    array_push($statuses, $response);
+                }
+            }
+            return $statuses;
+        } catch (Exception $error) {
+            return $error->getMessage();
+        }
     }
 }

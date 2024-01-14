@@ -18,7 +18,7 @@ class DependentDropdownController extends Controller
                 return response()->json(array('msg' => 'Pasien tidak ditemukan', 'status' => false, 'showKTP' => ''));
             }
             if ($patient->ktp)
-                $showKTP = Crypt::decrypt($patient->ktp);
+                $showKTP = decrypt($patient->ktp);
             return response()->json(array('msg' => 'Show KTP berhasil dilakukan', 'status' => true, 'showHiddenText' => $showKTP ?? ''));
         } catch (Exception $error) {
             Log::channel('command')->info($error);

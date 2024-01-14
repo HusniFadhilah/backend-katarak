@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use Exception;
+use App\Models\User;
 use App\Rules\InEnum;
 use App\Libraries\Fungsi;
 use Illuminate\Http\Request;
@@ -19,7 +20,6 @@ class EyeExaminationController extends Controller
     public function index(Request $request)
     {
         try {
-            // Log::channel('api')->info($request);
             $isAll = $request->is_all ?? true;
             $pluckKey = $request->pluck_key ?? 'id';
             $id = $request->id;
@@ -96,15 +96,23 @@ class EyeExaminationController extends Controller
                 ], 'Submit examination failed', 422);
             }
 
+            $users = User::whereRoleId(2)->get();
             $attr = $request->all();
             $attr['kader_id'] = Auth::id();
             $attr['examination_date_time'] = now();
             $currentUserInfo = Location::get($request->ip());
             $attr['latitude'] = $currentUserInfo ? $currentUserInfo->latitude : '';
             $attr['longitude'] = $currentUserInfo ? $currentUserInfo->longitude : '';
+            if ($request->latitude)
+                $attr['latitude'] = $request->latitude;
+            if ($request->longitude)
+                $attr['longitude'] = $request->longitude;
+            if ($attr['latitude'] && $attr['longitude'])
+                $attr['formatted_location'] = Fungsi::getFormattedLocation($attr['latitude'], $attr['longitude']);
             $eyeExamination = EyeExamination::create($attr);
             $this->insertData($request->eye_disorders_id, new EyeDisorderExamination, $eyeExamination, 'eye_disorder_id', 'eyeDisorderExaminations');
             $this->insertData($request->past_medicals_id, new PastMedicalExamination, $eyeExamination, 'past_medical_id', 'pastMedicalExaminations');
+            Fungsi::sendNotification($users);
             return ResponseFormatter::success([
                 'examination' => $eyeExamination
             ], 'Examination have been submitted');
@@ -225,7 +233,6 @@ class EyeExaminationController extends Controller
                     ], 'Change examination status failed', 403);
                 }
 
-            Log::channel('api')->info('', $request->all());
             $examination->update($request->all());
             return ResponseFormatter::success($examination, 'Change examination status successfull');
         } catch (Exception $error) {

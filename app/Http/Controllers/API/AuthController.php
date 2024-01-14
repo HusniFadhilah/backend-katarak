@@ -6,10 +6,11 @@ use Exception;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Helpers\ResponseFormatter;
-use Illuminate\Support\Facades\{DB, Log};
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\{Auth, Hash};
 use Illuminate\Auth\Events\Registered;
+use Laravel\Sanctum\PersonalAccessToken;
+use Illuminate\Support\Facades\{DB, Log};
+use Illuminate\Support\Facades\{Auth, Hash};
 use Illuminate\Support\Facades\{Password, Validator};
 
 class AuthController extends Controller
@@ -59,7 +60,14 @@ class AuthController extends Controller
             if ($request->header('HasToken') != '' && $check) {
                 $tokenResult = $request->header('HasToken');
             } else {
-                $tokenResult = $user->createToken('authToken')->plainTextToken;
+                $user->tokens()->delete();
+                $token = $user->createToken('authToken');
+                $personalAccessToken = PersonalAccessToken::find($token->accessToken->id);
+                if ($request->fcm_token) {
+                    $personalAccessToken->fcm_token = $request->fcm_token;
+                    $personalAccessToken->save();
+                }
+                $tokenResult = $token->plainTextToken;
             }
             // Jika berhasil maka loginkan
             return ResponseFormatter::success([
@@ -135,7 +143,13 @@ class AuthController extends Controller
             $user = User::where('email', $request->email)->first();
             // event(new Registered($user));
 
-            $tokenResult = $user->createToken('authToken')->plainTextToken;
+            $token = $user->createToken('authToken');
+            $personalAccessToken = PersonalAccessToken::find($token->accessToken->id);
+            if ($request->fcm_token) {
+                $personalAccessToken->fcm_token = $request->fcm_token;
+                $personalAccessToken->save();
+            }
+            $tokenResult = $token->plainTextToken;
 
             return ResponseFormatter::success([
                 'access_token' => $tokenResult,

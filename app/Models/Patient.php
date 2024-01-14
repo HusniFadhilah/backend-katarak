@@ -31,7 +31,7 @@ class Patient extends Model
 
     public function getKtpAttribute()
     {
-        return Crypt::decrypt($this->attributes['ktp']);
+        return decrypt($this->attributes['ktp']);
     }
 
     public function getKtpOriginal()

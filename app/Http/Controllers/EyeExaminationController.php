@@ -9,16 +9,10 @@ use App\Models\{EyeDisorderExamination, EyeExamination, EyeImage, PastMedicalExa
 use App\Helpers\ResponseFormatter;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Http;
 use Stevebauman\Location\Facades\Location;
 
 class EyeExaminationController extends Controller
 {
-    // public function test(Request $request)
-    // {
-    //     return EyeExamination::with(['eyeDisorders'])->get();
-    // }
-
     public function index(Request $request)
     {
         try {
@@ -153,7 +147,7 @@ class EyeExaminationController extends Controller
         $attr['latitude'] = $currentUserInfo ? $currentUserInfo->latitude : '';
         $attr['longitude'] = $currentUserInfo ? $currentUserInfo->longitude : '';
         if ($currentUserInfo)
-            $attr['formatted_location'] = $this->getFormattedLocation($attr['latitude'], $attr['longitude']);
+            $attr['formatted_location'] = Fungsi::getFormattedLocation($attr['latitude'], $attr['longitude']);
         $eyeExamination = EyeExamination::create($attr);
         $imagePath = Fungsi::compressImage($request->file('image'), 'eye-examination/');
         if (!$imagePath) {
@@ -166,28 +160,6 @@ class EyeExaminationController extends Controller
         $this->insertData($request->past_medicals_id, new PastMedicalExamination, $eyeExamination, 'past_medical_id', 'pastMedicalExaminations');
         Fungsi::sweetalert('Data pemeriksaan mata berhasil ditambahkan', 'success', 'Berhasil!');
         return redirect(route('eye-examination'));
-    }
-
-    private function getFormattedLocation($latitude, $longitude)
-    {
-        $apiKey = '9e304c7d13924b718d56a78553dd1b01';
-        $apiUrl = 'https://api.opencagedata.com/geocode/v1/json';
-
-        $url = "$apiUrl?key=$apiKey&q=$latitude,$longitude&no_annotations=1";
-        $response = Http::get($url)->json();
-        if ($response !== false) {
-            $data = $response;
-
-            $results = $data['results'];
-            if (!empty($results)) {
-                $formattedLocation = $results[0]['formatted'];
-            }
-            if ($data['status']['code'] != 200) {
-                Log::channel('command')->info('Error get location');
-            }
-        }
-
-        return $formattedLocation ?? null;
     }
 
     private function insertData($ids, $model, $eyeExamination, $column, $relationName)

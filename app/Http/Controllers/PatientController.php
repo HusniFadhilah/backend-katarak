@@ -118,7 +118,7 @@ class PatientController extends Controller
 
         $attr = $request->all();
         $attr['created_by'] = Auth::id();
-        $attr['ktp'] = Crypt::encrypt($request->ktp);
+        $attr['ktp'] = encrypt($request->ktp);
         $patient = Patient::create($attr);
 
         Fungsi::sweetalert('Pasien berhasil ditambahkan', 'success', 'Berhasil!');
@@ -132,7 +132,7 @@ class PatientController extends Controller
 
     public function edit(Patient $patient)
     {
-        $ktp = Crypt::decrypt($patient->ktp);
+        $ktp = decrypt($patient->ktp);
         return view('patients.edit', compact('patient', 'ktp'));
     }
 
@@ -149,7 +149,7 @@ class PatientController extends Controller
         $request->validate($rules);
         $attr = $request->all();
         $attr['modificated_by'] = Auth::id();
-        $attr['ktp'] = Crypt::encrypt($request->ktp);
+        $attr['ktp'] = encrypt($request->ktp);
         $patient->update($attr);
 
         Fungsi::sweetalert('Pasien berhasil diupdate', 'success', 'Berhasil!');

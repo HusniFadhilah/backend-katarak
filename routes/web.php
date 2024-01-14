@@ -112,7 +112,7 @@ Route::middleware([
     Route::post('getshowktp', [DependentDropdownController::class, 'getShowKTP'])->name('getshowktp');
 });
 
-Route::get('test', [EyeExaminationController::class, 'test']);
+Route::get('test', [UserController::class, 'test']);
 
 Route::get('clearcache', function () {
     Illuminate\Support\Facades\Artisan::call('cache:clear');

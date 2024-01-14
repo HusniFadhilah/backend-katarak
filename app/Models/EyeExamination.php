@@ -58,7 +58,10 @@ class EyeExamination extends Model
         parent::boot();
 
         static::deleting(function ($eyeExamination) {
-            $eyeExamination->eyeImages()->delete();
+            foreach ($eyeExamination->eyeImages()->get() as $eyeImage) {
+                $eyeImage->deleteFile();
+                $eyeImage->delete();
+            }
             $eyeExamination->eyeDisorderExaminations()->delete();
             $eyeExamination->pastMedicalExaminations()->delete();
         });

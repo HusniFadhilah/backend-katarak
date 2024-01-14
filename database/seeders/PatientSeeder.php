@@ -21,7 +21,7 @@ class PatientSeeder extends Seeder
                 'created_by' => 3,
                 'modificated_by' => 3,
                 'name' => 'Tes Pasien',
-                'ktp' => Crypt::encrypt('111111'),
+                'ktp' => encrypt('111111'),
                 'gender' => 'L',
                 'birth_date' => Carbon::createFromDate(2000, 10, 15),
                 'birth_place' => 'Semarang',
