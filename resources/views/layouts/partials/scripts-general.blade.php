@@ -461,7 +461,7 @@
             , icon: 'warning'
             , showCancelButton: true
             , showDenyButton: is_force_delete ? true : false
-            , denyButtonText: 'Ya, hapus permanen'
+            , denyButtonText: is_force_delete ? 'Ya, hapus permanen' : 'Ya, lanjutkan'
             , confirmButtonColor: '#3085d6'
             , denyButtonColor: '#e74c3c'
             , cancelButtonColor: '#95a5a6'
@@ -486,6 +486,11 @@
             form.submit();
         });
     }
+
+    function confirmAction(href = "", messageConfirm = "") {
+        let form = document.getElementById('confirm-form');
+        submitFormSwal(form, messageConfirm, href);
+    };
 
     function confirmDelete(href = "", text = "") {
         let form = document.getElementById('delete-form');

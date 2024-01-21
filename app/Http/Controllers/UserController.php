@@ -118,9 +118,9 @@ class UserController extends Controller
         $creator = 'Dibuat pada: ' . Date::tglDefault($user->created_at) . ' pukul ' . Date::pukul($user->created_at);
         $btn = '<a type="button" class="btn btn-dark btn-sm m-1 px-3" data-toggle="popover" tabindex="0" data-trigger="focus" title="Tentang user ini" data-bs-html="true" data-html="true" data-bs-content="' . $creator . '" data-content="' . $creator . '"><span class="fa fa-info-circle"></span></a>';
         if ($user->is_verified)
-            $btn .= '<a href="' . route('user.reject', $user->id) . '"><button type="button" class="btn btn-secondary btn-sm m-1 px-3" title="Tolak user"><span class="fa fa-times"></span></button></a>';
+            $btn .= '<a onclick="confirmAction(\'/user/' . $user->id . '/reject\',\'Akun ini akan ditolak/dibatalkan verifikasinya\')"><button type="button" class="btn btn-secondary btn-sm m-1 px-3" title="Tolak user"><span class="fa fa-times"></span></button></a>';
         if (!$user->is_verified)
-            $btn .= '<a href="' . route('user.verify', $user->id) . '"><button type="button" class="btn btn-success btn-sm m-1 px-3" title="Verifikasi user"><span class="fa fa-check"></span></button></a>';
+            $btn .= '<a onclick="confirmAction(\'/user/' . $user->id . '/verify\',\'Akun ini akan disetujui/diverifikasi\')"><button type="button" class="btn btn-success btn-sm m-1 px-3" title="Verifikasi user"><span class="fa fa-check"></span></button></a>';
         $btn .= '<a href="' . route('user.edit', $user->id) . '"><button type="button" class="btn btn-warning btn-sm m-1 px-3" title="Edit user"><span class="fa fa-edit"></span></button></a>';
         $btn .= '<a onclick="confirmDelete(\'/user/' . $user->id . '/destroy\',\'user\')"><button type="button" class="btn btn-danger btn-sm m-1 px-3" title="Hapus user"><span class="fa fa-trash"></span></button></a>';
         return $btn;
