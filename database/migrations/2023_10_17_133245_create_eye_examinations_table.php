@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('kader_id')->constrained('users')->onUpdate('cascade')->onDelete('restrict');
             $table->foreignId('doctor_id')->default(null)->nullable()->constrained('users')->onUpdate('cascade')->onDelete('restrict');
             $table->datetime('examination_date_time');
+            $table->datetime('verification_date_time')->default(null)->nullable();
             $table->string('right_eye_vision');
             $table->string('left_eye_vision');
             $table->string('other_eye_disorder')->default(null)->nullable();

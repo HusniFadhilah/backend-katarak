@@ -50,24 +50,23 @@ class AuthController extends Controller
                     'message' => 'Akun tidak terdaftar'
                 ], 'Authentication failed', 404);
             }
-            $check = false;
-            foreach (Auth::user()->tokens as $token) {
-                if ($token->token == hash('sha256', substr($request->header('HasToken'), -40))) {
-                    $check = true;
-                }
+            if ($user->role_id == 1) {
+                return ResponseFormatter::error([
+                    'message' => 'Anda adalah admin, silahkan login di web'
+                ], 'Authentication failed', 401);
             }
-            // Jika ada maka pakai token yang lama
-            if ($request->header('HasToken') != '' && $check) {
-                $tokenResult = $request->header('HasToken');
-            } else {
-                $user->tokens()->delete();
-                $token = $user->createToken('authToken');
-                $personalAccessToken = PersonalAccessToken::find($token->accessToken->id);
-                if ($request->fcm_token) {
-                    $personalAccessToken->fcm_token = $request->fcm_token;
-                    $personalAccessToken->save();
+            $token = $request->bearerToken();
+            if ($token) {
+                if (str_contains($token, '|')) {
+                    $subToken = substr($token, -48);
+                    $whereToken = hash('sha256', $subToken);
+                } else {
+                    $whereToken = $token;
                 }
-                $tokenResult = $token->plainTextToken;
+                $validToken = PersonalAccessToken::where('tokenable_id', $user->id)->where('token', $whereToken)->first();
+                $tokenResult = $validToken ? $token : $this->getTokenResult($user, $request);
+            } else {
+                $tokenResult = $this->getTokenResult($user, $request);
             }
             // Jika berhasil maka loginkan
             return ResponseFormatter::success([
@@ -76,12 +75,25 @@ class AuthController extends Controller
                 'user' => $user
             ], 'Authenticated');
         } catch (Exception $error) {
-            Log::channel('command')->info($error);
+            Log::channel('api')->info($error);
             return ResponseFormatter::error([
                 'message' => 'Terjadi kegagalan, silahkan coba lagi',
                 'error' => $error,
             ], 'Authentication failed', 500);
         }
+    }
+
+    private function getTokenResult($user, $request)
+    {
+        $user->tokens()->delete();
+        $token = $user->createToken('authToken');
+        $personalAccessToken = PersonalAccessToken::find($token->accessToken->id);
+        if ($request->fcm_token) {
+            $personalAccessToken->fcm_token = $request->fcm_token;
+            $personalAccessToken->save();
+        }
+        $tokenResult = $token->plainTextToken;
+        return $tokenResult;
     }
 
     public function logout(Request $request)
@@ -91,7 +103,7 @@ class AuthController extends Controller
 
             return ResponseFormatter::success($token, 'Token revoked');
         } catch (Exception $error) {
-            Log::channel('command')->info($error);
+            Log::channel('api')->info($error);
             return ResponseFormatter::error([
                 'message' => 'Terjadi kegagalan, silahkan coba lagi',
                 'error' => $error,
@@ -157,7 +169,7 @@ class AuthController extends Controller
                 'user' => $user
             ], 'User successfully registered');
         } catch (Exception $error) {
-            Log::channel('command')->info($error);
+            Log::channel('api')->info($error);
             return ResponseFormatter::error([
                 'message' => 'Terjadi kegagalan, silahkan coba lagi',
                 'error' => $error,
@@ -196,7 +208,7 @@ class AuthController extends Controller
 
             return ResponseFormatter::success([], 'Check user success');
         } catch (Exception $error) {
-            Log::channel('command')->info($error);
+            Log::channel('api')->info($error);
             return ResponseFormatter::error([
                 'message' => 'Terjadi kegagalan, silahkan coba lagi',
                 'error' => $error,
@@ -228,7 +240,7 @@ class AuthController extends Controller
                 return ResponseFormatter::error(['message' => 'Link reset password gagal dikirim', 'error' => ['email' => ['Silahkan coba dalam beberapa waktu lagi']]], 'Send link reset password failed', 403);
             }
         } catch (Exception $error) {
-            Log::channel('command')->info($error);
+            Log::channel('api')->info($error);
             return ResponseFormatter::error([
                 'message' => 'Terjadi kegagalan, silahkan coba lagi',
                 'error' => $error,

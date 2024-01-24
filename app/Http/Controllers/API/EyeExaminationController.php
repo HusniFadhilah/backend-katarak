@@ -206,7 +206,8 @@ class EyeExaminationController extends Controller
     public function confirm(Request $request, $id)
     {
         try {
-            $validator = Validator::make($request->all(), [
+            $attr = $request->all();
+            $validator = Validator::make($attr, [
                 'status' => 'required',
             ]);
 
@@ -232,8 +233,9 @@ class EyeExaminationController extends Controller
                         'message' => 'Maaf, terdapat perbedaan dokter yang melakukan pemeriksaan'
                     ], 'Change examination status failed', 403);
                 }
-
-            $examination->update($request->all());
+            $attr['doctor_id'] = $user->id;
+            $attr['verification_date_time'] = now();
+            $examination->update($attr);
             return ResponseFormatter::success($examination, 'Change examination status successfull');
         } catch (Exception $error) {
             Log::channel('api')->info($error);

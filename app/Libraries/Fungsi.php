@@ -172,7 +172,7 @@ class Fungsi
         return $formattedLocation ?? null;
     }
 
-    public static function sendNotification($users, $title = 'You have a new notification', $body = 'This is a body text')
+    public static function sendNotification($users, $title = 'You have a new notification', $body = 'This is a body text', $data = [])
     {
         try {
             $serverKey = env('SERVER_KEY_FIREBASE');
@@ -185,7 +185,7 @@ class Fungsi
                             'title' => $title,
                             'body' => $body,
                         ],
-                        'data' => (object)[],
+                        'data' => $data ?? (object)[],
                         'to' => $personalAccessToken->fcm_token
                     ];
 
