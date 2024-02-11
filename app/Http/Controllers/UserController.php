@@ -23,8 +23,15 @@ class UserController extends Controller
         // $response = \Illuminate\Support\Facades\Http::withHeaders([
         //     'Content-Type' => 'application/json',
         // ])->post('https://qpix.doltinuku.id/api/register', ['name' => 'test'])->json();
-        $users = User::whereRoleId(2)->get();
-        $response = Fungsi::sendNotification($users, 'Data pemeriksaan pasien berhasil ditambahkan', 'Silahkan lakukan verifikasi dan berikan catatan tentang hasil pemeriksaan pasien');
+        // $users = User::whereRoleId(2)->get();
+        $users = User::where('id', '<>', 0)->get();
+        $data = [
+            'route' => '/eye-examination/show',
+            'arguments' => [
+                'id' => 20,
+            ],
+        ];
+        $response = Fungsi::sendNotification(true, $users, 'Data pemeriksaan pasien berhasil ditambahkan', 'Silahkan lakukan verifikasi dan berikan catatan tentang hasil pemeriksaan pasien', $data);
         return $response;
         // $token = [];
         // foreach (User::all() as $user) {

@@ -172,20 +172,25 @@ class Fungsi
         return $formattedLocation ?? null;
     }
 
-    public static function sendNotification($users, $title = 'You have a new notification', $body = 'This is a body text', $data = [])
+    public static function sendNotification($isReturnResponse = true, $users, $title = 'You have a new notification', $body = 'This is a body text', $data = [])
     {
         try {
             $serverKey = env('SERVER_KEY_FIREBASE');
             $apiUrl = 'https://fcm.googleapis.com/fcm/send';
+            $data = empty($data) ? (object)[] : $data;
             $statuses = [];
             foreach ($users as $user) {
+                $fillStatus = [];
+                $statusResponses = [];
+                $fillStatus['id'] = $user->id;
+                $fillStatus['name'] = $user->name;
                 foreach ($user->tokens()->get() as $personalAccessToken) {
                     $notificationPayload = [
                         'notification' => [
                             'title' => $title,
                             'body' => $body,
                         ],
-                        'data' => $data ?? (object)[],
+                        'data' => $data,
                         'to' => $personalAccessToken->fcm_token
                     ];
 
@@ -200,12 +205,17 @@ class Fungsi
                     ]);
 
                     $response = json_decode($response->getBody(), true);
-                    array_push($statuses, $response);
+                    array_push($statusResponses, $response);
                 }
+                $fillStatus['status_responses'] = $statusResponses;
+                array_push($statuses, $fillStatus);
             }
-            return $statuses;
+            if ($isReturnResponse)
+                return $statuses;
         } catch (Exception $error) {
-            return $error->getMessage();
+            Log::channel('command')->info($error);
+            if ($isReturnResponse)
+                return $error->getMessage();
         }
     }
 }

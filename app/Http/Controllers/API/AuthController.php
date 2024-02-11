@@ -58,7 +58,8 @@ class AuthController extends Controller
             $token = $request->bearerToken();
             if ($token) {
                 if (str_contains($token, '|')) {
-                    $subToken = substr($token, -48);
+                    $subToken = explode('|', $token)[1];
+                    // $subToken = substr($token, -48);
                     $whereToken = hash('sha256', $subToken);
                 } else {
                     $whereToken = $token;

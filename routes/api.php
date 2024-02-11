@@ -25,7 +25,6 @@ Route::name('api.')->group(function () {
         Route::get('job', [JobController::class, 'index'])->name('job');
         Route::get('past-medical', [PastMedicalController::class, 'index'])->name('past-medical');
         Route::get('eye-disorder', [EyeDisorderController::class, 'index'])->name('eye-disorder');
-        Route::get('eye-examination', [EyeExaminationController::class, 'index'])->name('eye-examination');
         Route::get('patient', [PatientController::class, 'index'])->name('patient');
         Route::post('patient/store', [PatientController::class, 'store'])->name('patient.store');
         Route::delete('patient/{id}/destroy', [PatientController::class, 'destroy'])->name('patient.destroy');
@@ -36,6 +35,7 @@ Route::name('api.')->group(function () {
         Route::post('eye-examination/image/{id}/store', [EyeExaminationController::class, 'uploadImage'])->name('eye-examination.upload-image');
         Route::post('eye-examination/image/multiple/{id}/store', [EyeImageController::class, 'uploadMultipleImage']);
     });
+    Route::get('eye-examination', [EyeExaminationController::class, 'index'])->name('eye-examination');
     Route::post('forgotpassword', [AuthController::class, 'forgotPassword']);
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
