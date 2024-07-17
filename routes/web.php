@@ -112,6 +112,7 @@ Route::middleware([
     Route::post('getshowktp', [DependentDropdownController::class, 'getShowKTP'])->name('getshowktp');
 });
 
+Route::get('privacy-policy', [HomeController::class, 'privacy']);
 Route::get('test', [UserController::class, 'test']);
 
 Route::get('clearcache', function () {
@@ -122,22 +123,22 @@ Route::get('clearcache', function () {
     Illuminate\Support\Facades\Artisan::call('config:cache');
 });
 
-Route::get('composerinstall', function () {
-    shell_exec('composer install');
-});
+// Route::get('composerinstall', function () {
+//     shell_exec('composer install');
+// });
 
-Route::get('migrateseed', function () {
-    Artisan::call('migrate:fresh');
-    Artisan::call(
-        'db:seed',
-        array(
-            '--force' => true
-        )
-    );
-});
+// Route::get('migrateseed', function () {
+//     Artisan::call('migrate:fresh');
+//     Artisan::call(
+//         'db:seed',
+//         array(
+//             '--force' => true
+//         )
+//     );
+// });
 
-Route::get('storagelink', function () {
-    Artisan::call(
-        'storage:link'
-    );
-});
+// Route::get('storagelink', function () {
+//     Artisan::call(
+//         'storage:link'
+//     );
+// });

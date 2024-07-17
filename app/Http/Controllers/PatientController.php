@@ -132,7 +132,7 @@ class PatientController extends Controller
 
     public function edit(Patient $patient)
     {
-        $ktp = decrypt($patient->ktp);
+        $ktp = decrypt($patient->getKtpOriginal());
         return view('patients.edit', compact('patient', 'ktp'));
     }
 

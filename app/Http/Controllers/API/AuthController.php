@@ -86,7 +86,7 @@ class AuthController extends Controller
 
     private function getTokenResult($user, $request)
     {
-        $user->tokens()->delete();
+        // $user->tokens()->delete();
         $token = $user->createToken('authToken');
         $personalAccessToken = PersonalAccessToken::find($token->accessToken->id);
         if ($request->fcm_token) {

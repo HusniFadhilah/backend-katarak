@@ -9,7 +9,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return view('guest.index');
+        return view('home.index');
     }
 
     public function redirect()
@@ -20,5 +20,10 @@ class HomeController extends Controller
                 return redirect()->route('dashboard');
             return view('auth.check-status', compact('user'));
         }
+    }
+
+    public function privacy()
+    {
+        return view('home.privacy');
     }
 }

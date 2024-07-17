@@ -112,7 +112,13 @@ class EyeExaminationController extends Controller
             $eyeExamination = EyeExamination::create($attr);
             $this->insertData($request->eye_disorders_id, new EyeDisorderExamination, $eyeExamination, 'eye_disorder_id', 'eyeDisorderExaminations');
             $this->insertData($request->past_medicals_id, new PastMedicalExamination, $eyeExamination, 'past_medical_id', 'pastMedicalExaminations');
-            Fungsi::sendNotification(false, $users, 'Data pemeriksaan pasien berhasil ditambahkan', 'Silahkan lakukan verifikasi dan berikan catatan tentang hasil pemeriksaan pasien');
+            $data = [
+                'route' => '/eye-examination/show',
+                'arguments' => [
+                    'id' => $eyeExamination->id,
+                ],
+            ];
+            Fungsi::sendNotification(false, $users, 'Data pemeriksaan pasien berhasil ditambahkan', 'Silahkan lakukan verifikasi dan berikan catatan tentang hasil pemeriksaan pasien', $data);
             return ResponseFormatter::success([
                 'examination' => $eyeExamination
             ], 'Examination have been submitted');

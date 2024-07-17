@@ -23,8 +23,8 @@ class UserController extends Controller
         // $response = \Illuminate\Support\Facades\Http::withHeaders([
         //     'Content-Type' => 'application/json',
         // ])->post('https://qpix.doltinuku.id/api/register', ['name' => 'test'])->json();
-        // $users = User::whereRoleId(2)->get();
-        $users = User::where('id', '<>', 0)->get();
+        $users = User::whereRoleId(2)->get();
+        // $users = User::where('id', '<>', 0)->get();
         $data = [
             'route' => '/eye-examination/show',
             'arguments' => [

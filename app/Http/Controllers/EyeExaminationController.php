@@ -97,11 +97,11 @@ class EyeExaminationController extends Controller
     private function getColumnStatus($eyeExamination)
     {
         $badges = array(
-            'wait' => 'Menunggu verifikasi dokter',
-            'abnormal' => 'Terdapat kelainan di mata',
-            'normal' => 'Tidak terdapat kelainan di mata',
+            'wait' => ['color' => 'info', 'text' => 'Menunggu verifikasi dokter'],
+            'abnormal' => ['color' => 'danger', 'text' => 'Terdapat kelainan di mata'],
+            'normal' => ['color' => 'success', 'text' => 'Tidak terdapat kelainan di mata'],
         );
-        $text = '<span class="badge badge-sm badge-dark">' . (@$badges[$eyeExamination->status] ?? "Menunggu verifikasi dokter") . '</span>';
+        $text = '<span class="badge badge-sm badge-' . (@$badges[$eyeExamination->status]['color'] ?? "dark") . '">' . (@$badges[$eyeExamination->status]['text'] ?? "Menunggu verifikasi dokter") . '</span>';
         return $text;
     }
 
