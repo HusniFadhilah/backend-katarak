@@ -36,10 +36,14 @@ class EyeExaminationController extends Controller
                 $eyeExaminations->whereHas('patient', function ($q) use ($name) {
                     $q->where('name', 'LIKE', '%' . $name . '%');
                 });
-            if ($search)
+            if ($search) {
                 $eyeExaminations->whereHas('patient', function ($q) use ($search) {
-                    $q->where('name', 'LIKE', '%' . $search . '%')->orWhere('ktp', 'LIKE', '%' . $search . '%');
+                    if (is_numeric($search))
+                        $q->where('ktp', 'LIKE', '%' . decrypt($search) . '%');
+                    else
+                        $q->where('name', 'LIKE', '%' . $search . '%');
                 });
+            }
             if ($id)
                 $eyeExaminations->whereId($id);
             if ($kaderId)
@@ -96,7 +100,7 @@ class EyeExaminationController extends Controller
                 ], 'Submit examination failed', 422);
             }
 
-            $users = User::whereRoleId(2)->get();
+            $doctors = User::whereRoleId(2)->get();
             $attr = $request->all();
             $attr['kader_id'] = Auth::id();
             $attr['examination_date_time'] = now();
@@ -112,13 +116,15 @@ class EyeExaminationController extends Controller
             $eyeExamination = EyeExamination::create($attr);
             $this->insertData($request->eye_disorders_id, new EyeDisorderExamination, $eyeExamination, 'eye_disorder_id', 'eyeDisorderExaminations');
             $this->insertData($request->past_medicals_id, new PastMedicalExamination, $eyeExamination, 'past_medical_id', 'pastMedicalExaminations');
+            $countExamination = $eyeExamination->kader->count_examination;
+            $eyeExamination->kader->update(['count_examination' => $countExamination++]);
             $data = [
                 'route' => '/eye-examination/show',
                 'arguments' => [
                     'id' => $eyeExamination->id,
                 ],
             ];
-            Fungsi::sendNotification(false, $users, 'Data pemeriksaan pasien berhasil ditambahkan', 'Silahkan lakukan verifikasi dan berikan catatan tentang hasil pemeriksaan pasien', $data);
+            Fungsi::sendNotification(false, $doctors, 'Data pemeriksaan pasien berhasil ditambahkan', 'Silahkan lakukan verifikasi dan berikan catatan tentang hasil pemeriksaan pasien', $data);
             return ResponseFormatter::success([
                 'examination' => $eyeExamination
             ], 'Examination have been submitted');
@@ -197,7 +203,12 @@ class EyeExaminationController extends Controller
                     'message' => 'Data pemeriksaan mata tidak ditemukan',
                 ], 'Eye examination not found', 404);
             }
-
+            $countExaminationVerified = $eyeExamination->kader->count_examination_verified;
+            $countVerify = $eyeExamination->doctor->count_verify;
+            $countExamination = $eyeExamination->kader->count_examination;
+            $eyeExamination->kader->update(['count_examination' => $countExamination--]);
+            $eyeExamination->kader->update(['count_examination_verified' => $countExaminationVerified--]);
+            $eyeExamination->doctor->update(['count_verify' => $countVerify--]);
             $eyeExamination->delete();
             return ResponseFormatter::success(null, 'Eye examination Have Been Deleted');
         } catch (Exception $error) {
@@ -242,6 +253,10 @@ class EyeExaminationController extends Controller
             $attr['doctor_id'] = $user->id;
             $attr['verification_date_time'] = now();
             $examination->update($attr);
+            $countExaminationVerified = $examination->kader->count_examination_verified;
+            $countVerify = $examination->doctor->count_verify;
+            $examination->kader->update(['count_examination_verified' => $countExaminationVerified++]);
+            $examination->doctor->update(['count_verify' => $countVerify++]);
             return ResponseFormatter::success($examination, 'Change examination status successfull');
         } catch (Exception $error) {
             Log::channel('api')->info($error);

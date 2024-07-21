@@ -142,3 +142,14 @@ Route::get('clearcache', function () {
 //         'storage:link'
 //     );
 // });
+
+Route::get('migrate', function () {
+    // return \App\Models\FloodIndex::get(['id', 'village_category_id', 'flood_height_id', 'upper_limit', 'lower_limit']);
+    Artisan::call(
+        'migrate',
+        array(
+            '--path' => 'database/migrations/2024_07_22_000119_add_count_column_user.php',
+            '--force' => true
+        )
+    );
+});
