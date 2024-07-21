@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use App\Libraries\Date;
 use App\Libraries\Fungsi;
-use App\Models\{Role, User};
+use App\Models\{EyeExamination, Role, User};
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Helpers\ResponseFormatter;
@@ -38,6 +38,14 @@ class UserController extends Controller
         //     array_push($token, $user->tokens()->get());
         // }
         // dd($token);
+    }
+
+    public function test2()
+    {
+        foreach (User::all() as $user) {
+            // $user->update(['count_verify' => 0, 'count_examination' => 0, 'count_examination_verified' => 0]);
+            $user->refreshCounts();
+        }
     }
 
     public function index(Request $request)

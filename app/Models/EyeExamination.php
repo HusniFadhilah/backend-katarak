@@ -64,6 +64,8 @@ class EyeExamination extends Model
             }
             $eyeExamination->eyeDisorderExaminations()->delete();
             $eyeExamination->pastMedicalExaminations()->delete();
+            $eyeExamination->kader->refreshCounts();
+            $eyeExamination->doctor->refreshCounts();
         });
     }
 }

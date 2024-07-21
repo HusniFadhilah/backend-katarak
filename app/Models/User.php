@@ -83,4 +83,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(PersonalAccessToken::class, 'tokenable_id', 'id');
     }
+
+    public function refreshCounts()
+    {
+        $this->count_verify = EyeExamination::where('doctor_id', $this->id)
+            ->where('status', '!=', 'wait')
+            ->count();
+
+        $this->count_examination = EyeExamination::where('kader_id', $this->id)
+            ->count();
+
+        $this->count_examination_verified = EyeExamination::where('kader_id', $this->id)
+            ->where('status', '!=', 'wait')
+            ->count();
+        $this->save();
+    }
 }

@@ -114,6 +114,7 @@ Route::middleware([
 
 Route::get('privacy-policy', [HomeController::class, 'privacy']);
 Route::get('test', [UserController::class, 'test']);
+Route::get('test2', [UserController::class, 'test2']);
 
 Route::get('clearcache', function () {
     Illuminate\Support\Facades\Artisan::call('cache:clear');
