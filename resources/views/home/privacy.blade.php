@@ -25,7 +25,7 @@
                             <li>Nama dan ID</li>
                             <li>Alamat Email</li>
                             <li>Nomor Telepon</li>
-                            <li>Data lokasi dari GPS untuk memfasilitasi skrining di lokasi yang tepat</li>
+                            {{-- <li>Data lokasi dari GPS untuk memfasilitasi skrining di lokasi yang tepat</li> --}}
                         </ul>
                         Informasi ini dikumpulkan hanya untuk tujuan internal kami, seperti untuk menginformasikan Anda kepada dokter, kader, dan memberikan layanan yang disediakan pada unit yang bekerjasama dengan kami.
                     </p>
