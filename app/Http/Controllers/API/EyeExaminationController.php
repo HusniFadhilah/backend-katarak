@@ -204,11 +204,12 @@ class EyeExaminationController extends Controller
                 ], 'Eye examination not found', 404);
             }
             $countExaminationVerified = $eyeExamination->kader->count_examination_verified;
-            $countVerify = $eyeExamination->doctor->count_verify;
+            $countVerify = $eyeExamination->doctor ? $eyeExamination->doctor->count_verify : 0;
             $countExamination = $eyeExamination->kader->count_examination;
             $eyeExamination->kader->update(['count_examination' => $countExamination--]);
             $eyeExamination->kader->update(['count_examination_verified' => $countExaminationVerified--]);
-            $eyeExamination->doctor->update(['count_verify' => $countVerify--]);
+            if ($eyeExamination->doctor)
+                $eyeExamination->doctor->update(['count_verify' => $countVerify--]);
             $eyeExamination->delete();
             return ResponseFormatter::success(null, 'Eye examination Have Been Deleted');
         } catch (Exception $error) {
@@ -236,28 +237,29 @@ class EyeExaminationController extends Controller
             }
 
             $user = Auth::user();
-            $examination = EyeExamination::find($id);
-            if (!$examination) {
+            $eyeExamination = EyeExamination::find($id);
+            if (!$eyeExamination) {
                 return ResponseFormatter::error([
                     'error' => null,
                     'message' => 'Data pemeriksaan mata tidak ada'
-                ], 'Change examination status failed', 404);
+                ], 'Change eyeExamination status failed', 404);
             }
-            if ($examination->doctor_id != null)
-                if ($user->id != $examination->doctor_id) {
+            if ($eyeExamination->doctor_id != null)
+                if ($user->id != $eyeExamination->doctor_id) {
                     return ResponseFormatter::error([
                         'error' => null,
                         'message' => 'Maaf, terdapat perbedaan dokter yang melakukan pemeriksaan'
-                    ], 'Change examination status failed', 403);
+                    ], 'Change eyeExamination status failed', 403);
                 }
             $attr['doctor_id'] = $user->id;
             $attr['verification_date_time'] = now();
-            $examination->update($attr);
-            $countExaminationVerified = $examination->kader->count_examination_verified;
-            $countVerify = $examination->doctor->count_verify;
-            $examination->kader->update(['count_examination_verified' => $countExaminationVerified++]);
-            $examination->doctor->update(['count_verify' => $countVerify++]);
-            return ResponseFormatter::success($examination, 'Change examination status successfull');
+            $eyeExamination->update($attr);
+            $countExaminationVerified = $eyeExamination->kader->count_examination_verified;
+            $countVerify = $eyeExamination->doctor ? $eyeExamination->doctor->count_verify : 0;
+            $eyeExamination->kader->update(['count_examination_verified' => $countExaminationVerified++]);
+            if ($eyeExamination->doctor)
+                $eyeExamination->doctor->update(['count_verify' => $countVerify++]);
+            return ResponseFormatter::success($eyeExamination, 'Change eyeExamination status successfull');
         } catch (Exception $error) {
             Log::channel('api')->info($error);
             return ResponseFormatter::error([
